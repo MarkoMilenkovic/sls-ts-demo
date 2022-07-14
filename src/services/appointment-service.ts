@@ -16,6 +16,9 @@ class AppointmentService {
         return await gen2array(this.mapper.query(Appointment, keyCondition, { filter: filterExpression }));
     }
 
+    //todo: check if employeeId is valid -> userId will be comming from JWT so validation is not implemented
+    //todo: check dynamodb transactions
+    //todo: delete next appointments from table
     async scheduleAppointment(employeeId: string, appointmentStartTime: string, userId: string): Promise<Appointment> {
         const appointment = new Appointment();
         appointment.employeeId = employeeId;
@@ -38,6 +41,8 @@ class AppointmentService {
         return await this.mapper.update(appointment, options);
     }
 
+    //todo: check if employeeId is valid 
+    //todo: calculate latest available time: something like 
     async generateAppointments(employeeId: string, startDateTime: Date, endDateTime: Date): Promise<Appointment[]> {
         let appointmentsToSave = [];
         const firstAppointment = new Appointment();

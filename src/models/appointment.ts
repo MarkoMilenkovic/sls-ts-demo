@@ -7,6 +7,7 @@ import {
 import config from "../../config.json";
 const tableName = config.DYNAMODB_TABLE;
 
+//todo: add serviceId
 @table(tableName)
 export class Appointment {
     @hashKey()
