@@ -1,0 +1,73 @@
+service: appointment-operations
+frameworkVersion: '3'
+provider:
+  name: aws
+  runtime: nodejs12.x
+  lambdaHashingVersion: 20201221
+
+  stage: ${file(config.json):STAGE}
+  region: ${file(config.json):REGION}
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "dynamodb:GetItem"
+        - "dynamodb:PutItem"
+        - "dynamodb:UpdateItem"
+        - "dynamodb:DeleteItem"
+        - "dynamodb:Query"
+        - "dynamodb:BatchWriteItem"
+      Resource:
+        - "arn:aws:dynamodb:${self:provider.region}:*:table/${file(config.json):DYNAMODB_TABLE}"
+plugins:
+  - serverless-offline
+  - serverless-dynamodb-local
+  - serverless-plugin-typescript
+#Local DynamoDb configuration
+custom:
+  dynamodb:
+    stages:
+      - ${file(config.json):STAGE}
+    start: 
+      port: 8000
+      migrate: true # create the tables
+      # inMemory: true
+      onStart: true
+
+functions:
+  getAppointments:
+    handler: src/functions/getAvailableAppointments.handler
+    events:
+      - http:
+          path: appointment/employee/{employeeId}/date/{date}
+          method: get
+  generateAppointments:
+    handler: src/functions/generateAppointments.hanler
+    events:
+      - http:
+          path: appointment
+          method: post
+  scheduleAppointment:
+    handler: src/functions/scheduleAppointment.handler
+    events:
+      - http:
+          path: appointment
+          method: put
+resources:
+  Resources:
+    BasicOperationsTable:
+      Type: "AWS::DynamoDB::Table"
+      Properties:
+        AttributeDefinitions:
+        - AttributeName: "employeeId"
+          AttributeType: "S"
+        - AttributeName: "appointmentStartTime"
+          AttributeType: "S"
+        KeySchema:
+        - AttributeName: "employeeId"
+          KeyType: "HASH"
+        - AttributeName: appointmentStartTime
+          KeyType: "RANGE"  
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: ${file(config.json):DYNAMODB_TABLE}
