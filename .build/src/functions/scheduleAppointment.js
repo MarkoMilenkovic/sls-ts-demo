@@ -1,18 +1,15 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.handler = void 0;
 const api_gateway_1 = require("../libs/api-gateway");
-const services_1 = __importDefault(require("../services"));
+const services_1 = require("../services");
 const handler = async (event) => {
     const body = JSON.parse(event.body);
     const { employeeId, appointmentStartTime, userId } = body;
     let statusCode;
     let response;
     try {
-        const appointment = await services_1.default.scheduleAppointment(employeeId, appointmentStartTime, userId);
+        const appointment = await services_1.appointmentService.scheduleAppointment(employeeId, appointmentStartTime, userId);
         response = appointment;
         statusCode = 200;
     }

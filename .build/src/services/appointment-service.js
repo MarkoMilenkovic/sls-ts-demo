@@ -15,6 +15,9 @@ class AppointmentService {
         const filterExpression = new dynamodb_expressions_1.FunctionExpression('attribute_not_exists', new dynamodb_expressions_1.AttributePath('userId'));
         return await (0, array_helper_1.default)(this.mapper.query(appointment_1.Appointment, keyCondition, { filter: filterExpression }));
     }
+    //todo: check if employeeId is valid -> userId will be comming from JWT so validation is not implemented
+    //todo: check dynamodb transactions
+    //todo: delete next appointments from table
     async scheduleAppointment(employeeId, appointmentStartTime, userId) {
         const appointment = new appointment_1.Appointment();
         appointment.employeeId = employeeId;
@@ -33,6 +36,8 @@ class AppointmentService {
         };
         return await this.mapper.update(appointment, options);
     }
+    //todo: check if employeeId is valid 
+    //todo: calculate latest available time: something like 
     async generateAppointments(employeeId, startDateTime, endDateTime) {
         let appointmentsToSave = [];
         const firstAppointment = new appointment_1.Appointment();

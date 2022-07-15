@@ -11,5 +11,5 @@ if (process.env.IS_OFFLINE) {
   dynamoDBOptions = {};
 }
 
-const client = new DynamoDB(dynamoDBOptions);
+export const client = new DynamoDB(dynamoDBOptions);
 export const mapper = new DataMapper({ client });

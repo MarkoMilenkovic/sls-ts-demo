@@ -1,6 +1,6 @@
 import { APIGatewayProxyResult, APIGatewayEvent } from 'aws-lambda';
 import { formatJSONResponse } from '../libs/api-gateway';
-import appointmentService from '../services';
+import {appointmentService} from '../services';
 
 export const handler = async (event: APIGatewayEvent): Promise<APIGatewayProxyResult> => {
     const employeeId = event.pathParameters?.employeeId as string;
