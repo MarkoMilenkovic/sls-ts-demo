@@ -58,6 +58,12 @@ functions:
       - http:
           path: shops
           method: put
+  createShop:
+    handler: src/functions/createShop.handler
+    events:
+      - http:
+          path: shops
+          method: post
 resources:
   Resources:
     AppointmentTable:
