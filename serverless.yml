@@ -35,31 +35,31 @@ custom:
 
 functions:
   getAppointments:
-    handler: src/functions/getAvailableAppointments.handler
+    handler: src/functions/appointments/getAvailableAppointments.handler
     events:
       - http:
           path: appointment/employee/{employeeId}/date/{date}
           method: get
   generateAppointments:
-    handler: src/functions/generateAppointments.hanler
+    handler: src/functions/appointments/generateAppointments.hanler
     events:
       - http:
           path: appointment
           method: post
   scheduleAppointment:
-    handler: src/functions/scheduleAppointment.handler
+    handler: src/functions/appointments/scheduleAppointment.handler
     events:
       - http:
           path: appointment
           method: put
-  getShopByLocation:
-    handler: src/functions/getShopByLocation.handler
+  queryShopsByRadius:
+    handler: src/functions/shops/queryShopsByRadius.handler
     events:
       - http:
           path: shops
-          method: put
+          method: get
   createShop:
-    handler: src/functions/createShop.handler
+    handler: src/functions/shops/createShop.handler
     events:
       - http:
           path: shops

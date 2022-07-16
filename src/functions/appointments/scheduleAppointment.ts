@@ -1,6 +1,6 @@
 import { APIGatewayEvent, APIGatewayProxyResult } from "aws-lambda";
-import { formatJSONResponse } from "../libs/api-gateway";
-import {appointmentService} from "../services";
+import { formatJSONResponse } from "../../libs/api-gateway";
+import {appointmentService} from "../../services";
 
 export const handler = async (event: APIGatewayEvent): Promise<APIGatewayProxyResult> => {
     const body = JSON.parse(event.body as string);

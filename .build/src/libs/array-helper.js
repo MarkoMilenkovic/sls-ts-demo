@@ -1,9 +1,4 @@
 "use strict";
-// // async function toArray(asyncIterator){ 
-// //     const arr=[]; 
-// //     for await(const i of asyncIterator) arr.push(i); 
-// //     return arr;
-// // }
 var __asyncValues = (this && this.__asyncValues) || function (o) {
     if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
     var m = o[Symbol.asyncIterator], i;
@@ -11,11 +6,6 @@ var __asyncValues = (this && this.__asyncValues) || function (o) {
     function verb(n) { i[n] = o[n] && function (v) { return new Promise(function (resolve, reject) { v = o[n](v), settle(resolve, reject, v.done, v.value); }); }; }
     function settle(resolve, reject, d, v) { Promise.resolve(v).then(function(v) { resolve({ value: v, done: d }); }, reject); }
 };
-// // export const toArray = (asyncIterator: AsyncIterableIterator) => {
-// //     const arr=[]; 
-// //     for await(const i of asyncIterator) arr.push(i); 
-// //     return arr;
-// //   }
 async function gen2array(gen) {
     var e_1, _a;
     const out = [];

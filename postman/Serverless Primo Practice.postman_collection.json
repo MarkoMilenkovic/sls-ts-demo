@@ -1,0 +1,163 @@
+{
+	"info": {
+		"_postman_id": "9b67b4b5-d701-486d-8790-a14df5c6c629",
+		"name": "Serverless Primo Practice",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "scheduleAppointment",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"employeeId\": \"lemi1\",\n    \"appointmentStartTime\": \"2022-07-11T08:15:00.000Z\",\n    \"userId\": \"1\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{protocol}}://{{apiUrl}}/{{stage}}/dev/appointment",
+					"protocol": "{{protocol}}",
+					"host": [
+						"{{apiUrl}}"
+					],
+					"path": [
+						"{{stage}}",
+						"dev",
+						"appointment"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getAvailableAppointments",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{protocol}}://{{apiUrl}}/{{stage}}/appointment/employee/joca/date/2022-07-13",
+					"protocol": "{{protocol}}",
+					"host": [
+						"{{apiUrl}}"
+					],
+					"path": [
+						"{{stage}}",
+						"appointment",
+						"employee",
+						"joca",
+						"date",
+						"2022-07-13"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "generateAppointments",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"employeeId\": \"joca\",\n    \"startTime\": \"2022-07-13T08:00:00.000Z\",\n    \"endTime\": \"2022-07-13T16:00:00.000Z\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{protocol}}://{{apiUrl}}/{{stage}}/appointment",
+					"protocol": "{{protocol}}",
+					"host": [
+						"{{apiUrl}}"
+					],
+					"path": [
+						"{{stage}}",
+						"appointment"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "createShop",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"latitude\": 40.09717, \n    \"longitude\": 23.78431,\n    \"name\": \"Milenko test\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{protocol}}://{{apiUrl}}/{{stage}}/dev/shops",
+					"protocol": "{{protocol}}",
+					"host": [
+						"{{apiUrl}}"
+					],
+					"path": [
+						"{{stage}}",
+						"dev",
+						"shops"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "queryShopsByRadius",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"latitude\": 40.09717, \n    \"longitude\": 23.78431,\n    \"radius\": 2040\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{protocol}}://{{apiUrl}}/{{stage}}/shops?latitude=40.09717&longitude=23.78431&radius=2400",
+					"protocol": "{{protocol}}",
+					"host": [
+						"{{apiUrl}}"
+					],
+					"path": [
+						"{{stage}}",
+						"shops"
+					],
+					"query": [
+						{
+							"key": "latitude",
+							"value": "40.09717"
+						},
+						{
+							"key": "longitude",
+							"value": "23.78431"
+						},
+						{
+							"key": "radius",
+							"value": "2400"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

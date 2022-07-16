@@ -4,7 +4,7 @@ exports.mapper = exports.client = void 0;
 const dynamodb_data_mapper_1 = require("@aws/dynamodb-data-mapper");
 const aws_sdk_1 = require("aws-sdk");
 let dynamoDBOptions;
-if (!process.env.IS_OFFLINE) {
+if (process.env.IS_OFFLINE) {
     dynamoDBOptions = {
         region: "localhost",
         endpoint: "http://localhost:8000"
