@@ -4,6 +4,7 @@ import ShopService from "./shop-service";
 import { GeoDataManager, GeoDataManagerConfiguration } from 'dynamodb-geo';
 import config from "../../config.json";
 import { client } from "../libs/dynamoDb";
+import PrimoServices from "./primo-services";
 
 // const appointmentService = new AppointmentService(mapper);
 const geoDataConfig = new GeoDataManagerConfiguration(client, config.PRIMO_SHOP_TABLE);
@@ -14,3 +15,4 @@ const myGeoTableManager = new GeoDataManager(geoDataConfig);
 
 export const appointmentService = new AppointmentService(mapper);
 export const shopService = new ShopService(myGeoTableManager);
+export const primoServices = new PrimoServices(mapper);

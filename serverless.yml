@@ -76,6 +76,30 @@ functions:
       - http:
           path: shops
           method: post
+  createServices:
+    handler: src/functions/services/createServices.handler
+    events:
+      - http:
+          path: services
+          method: post
+  getServices:
+    handler: src/functions/services/getServices.handler
+    events:
+      - http:
+          path: services
+          method: get
+  addServicesToShop:
+    handler: src/functions/shops/addServicesToShop.handler
+    events:
+      - http:
+          path: services/{shopId}
+          method: post
+  getServicesForShop:
+    handler: src/functions/shops/getServicesForShop.handler
+    events:
+      - http:
+          path: services/{shopId}
+          method: get
 resources:
   Resources:
     AppointmentTable:
@@ -145,3 +169,43 @@ resources:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
         TableName: ${file(config.json):PRIMO_SHOP_TABLE}
+    PrimoServiceTable:
+      Type: "AWS::DynamoDB::Table"
+      Properties:
+        AttributeDefinitions:
+        - AttributeName: "serviceId"
+          AttributeType: "S"
+        KeySchema:
+        - AttributeName: "serviceId"
+          KeyType: "HASH"
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: ${file(config.json):PRIMO_SERVICE_TABLE}
+    PrimoServicesPerShopTable:
+      Type: "AWS::DynamoDB::Table"
+      Properties:
+        AttributeDefinitions:
+        - AttributeName: "serviceId"
+          AttributeType: "S"
+        - AttributeName: "shopId"
+          AttributeType: "S"
+        KeySchema:
+        - AttributeName: "serviceId"
+          KeyType: "HASH"
+        - AttributeName: "shopId"
+          KeyType: "RANGE"  
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        GlobalSecondaryIndexes:
+          - IndexName: "shopId-index"
+            KeySchema:
+              - AttributeName: "shopId"
+                KeyType: "HASH"
+            Projection:
+              ProjectionType: "ALL"
+            ProvisionedThroughput:
+              ReadCapacityUnits: 1
+              WriteCapacityUnits: 1
+        TableName: ${file(config.json):PRIMO_SERVICES_PER_SHOP_TABLE}

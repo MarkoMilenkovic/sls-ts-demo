@@ -2,5 +2,7 @@
     "REGION": "eu-central-1",
     "STAGE": "dev",
     "PRIMO_APPOINTMENT_TABLE": "lemilica-zakazivanje-test",
-    "PRIMO_SHOP_TABLE": "lemilica-geolocation"
+    "PRIMO_SHOP_TABLE": "lemilica-geolocation",
+    "PRIMO_SERVICE_TABLE": "lemilica-service-test",
+    "PRIMO_SERVICES_PER_SHOP_TABLE": "lemilica-services-per-shop-test"
 }

@@ -6,224 +6,286 @@
 	},
 	"item": [
 		{
-			"name": "scheduleAppointment",
-			"request": {
-				"method": "PUT",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"employeeId\": \"lemi1\",\n    \"appointmentStartTime\": \"2022-07-191T08:15:00.000Z\",\n    \"userId\": \"1\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+			"name": "appointments",
+			"item": [
+				{
+					"name": "scheduleAppointment",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"employeeId\": \"lemi1\",\n    \"appointmentStartTime\": \"2022-07-191T08:15:00.000Z\",\n    \"userId\": \"1\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{protocol}}://{{apiUrl}}/{{stage}}/appointment",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"{{stage}}",
+								"appointment"
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "{{protocol}}://{{apiUrl}}/{{stage}}/appointment",
-					"protocol": "{{protocol}}",
-					"host": [
-						"{{apiUrl}}"
-					],
-					"path": [
-						"{{stage}}",
-						"appointment"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "getAvailableAppointments",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{protocol}}://{{apiUrl}}/{{stage}}/appointment/employee/joca/date/2022-07-13",
-					"protocol": "{{protocol}}",
-					"host": [
-						"{{apiUrl}}"
-					],
-					"path": [
-						"{{stage}}",
-						"appointment",
-						"employee",
-						"joca",
-						"date",
-						"2022-07-13"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "generateAppointments",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"employeeId\": \"joca\",\n    \"startTime\": \"2022-07-13T08:00:00.000Z\",\n    \"endTime\": \"2022-07-13T16:00:00.000Z\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+				{
+					"name": "getAvailableAppointments",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{protocol}}://{{apiUrl}}/{{stage}}/appointment/employee/joca/date/2022-07-13",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"{{stage}}",
+								"appointment",
+								"employee",
+								"joca",
+								"date",
+								"2022-07-13"
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "{{protocol}}://{{apiUrl}}/{{stage}}/appointment",
-					"protocol": "{{protocol}}",
-					"host": [
-						"{{apiUrl}}"
-					],
-					"path": [
-						"{{stage}}",
-						"appointment"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "createShop",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"latitude\": 40.09717, \n    \"longitude\": 23.78431,\n    \"name\": \"Milenko test\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+				{
+					"name": "generateAppointments",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"employeeId\": \"joca\",\n    \"startTime\": \"2022-07-13T08:00:00.000Z\",\n    \"endTime\": \"2022-07-13T16:00:00.000Z\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{protocol}}://{{apiUrl}}/{{stage}}/appointment",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"{{stage}}",
+								"appointment"
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "{{protocol}}://{{apiUrl}}/{{stage}}/shops",
-					"protocol": "{{protocol}}",
-					"host": [
-						"{{apiUrl}}"
-					],
-					"path": [
-						"{{stage}}",
-						"shops"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "queryShopsByRadius",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"latitude\": 40.09717, \n    \"longitude\": 23.78431,\n    \"radius\": 2040\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+				{
+					"name": "getPreviousAppointments",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{protocol}}://{{apiUrl}}/{{stage}}/appointment/previous?userId=1&limit=1&date=2022-07-13T20:00:00.000Z",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"{{stage}}",
+								"appointment",
+								"previous"
+							],
+							"query": [
+								{
+									"key": "userId",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "1"
+								},
+								{
+									"key": "date",
+									"value": "2022-07-13T20:00:00.000Z"
+								}
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "{{protocol}}://{{apiUrl}}/{{stage}}/shops?latitude=40.09717&longitude=23.78431&radius=2400",
-					"protocol": "{{protocol}}",
-					"host": [
-						"{{apiUrl}}"
-					],
-					"path": [
-						"{{stage}}",
-						"shops"
-					],
-					"query": [
-						{
-							"key": "latitude",
-							"value": "40.09717"
-						},
-						{
-							"key": "longitude",
-							"value": "23.78431"
-						},
-						{
-							"key": "radius",
-							"value": "2400"
+				{
+					"name": "getUpcomingAppointments",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{protocol}}://{{apiUrl}}/{{stage}}/appointment/upcoming?userId=1&limit=1&date=2022-07-13T20:00:00.000Z",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"{{stage}}",
+								"appointment",
+								"upcoming"
+							],
+							"query": [
+								{
+									"key": "userId",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "1"
+								},
+								{
+									"key": "date",
+									"value": "2022-07-13T20:00:00.000Z"
+								}
+							]
 						}
-					]
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
 		},
 		{
-			"name": "getPreviousAppointments",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{protocol}}://{{apiUrl}}/{{stage}}/appointment/previous?userId=1&limit=1&date=2022-07-13T20:00:00.000Z",
-					"protocol": "{{protocol}}",
-					"host": [
-						"{{apiUrl}}"
-					],
-					"path": [
-						"{{stage}}",
-						"appointment",
-						"previous"
-					],
-					"query": [
-						{
-							"key": "userId",
-							"value": "1"
+			"name": "shops",
+			"item": [
+				{
+					"name": "createShop",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"latitude\": 40.09717, \n    \"longitude\": 23.78431,\n    \"name\": \"Milenko test\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
 						},
-						{
-							"key": "limit",
-							"value": "1"
-						},
-						{
-							"key": "date",
-							"value": "2022-07-13T20:00:00.000Z"
+						"url": {
+							"raw": "{{protocol}}://{{apiUrl}}/{{stage}}/shops",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"{{stage}}",
+								"shops"
+							]
 						}
-					]
+					},
+					"response": []
+				},
+				{
+					"name": "queryShopsByRadius",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"latitude\": 40.09717, \n    \"longitude\": 23.78431,\n    \"radius\": 2040\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{protocol}}://{{apiUrl}}/{{stage}}/shops?latitude=40.09717&longitude=23.78431&radius=2400",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"{{stage}}",
+								"shops"
+							],
+							"query": [
+								{
+									"key": "latitude",
+									"value": "40.09717"
+								},
+								{
+									"key": "longitude",
+									"value": "23.78431"
+								},
+								{
+									"key": "radius",
+									"value": "2400"
+								}
+							]
+						}
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
 		},
 		{
-			"name": "getUpcomingAppointments",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{protocol}}://{{apiUrl}}/{{stage}}/appointment/upcoming?userId=1&limit=1&date=2022-07-13T20:00:00.000Z",
-					"protocol": "{{protocol}}",
-					"host": [
-						"{{apiUrl}}"
-					],
-					"path": [
-						"{{stage}}",
-						"appointment",
-						"upcoming"
-					],
-					"query": [
-						{
-							"key": "userId",
-							"value": "1"
+			"name": "services",
+			"item": [
+				{
+					"name": "createServices",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "[\n    \"service1\",\n    \"service2\",\n    \"service3\"\n]",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
 						},
-						{
-							"key": "limit",
-							"value": "1"
-						},
-						{
-							"key": "date",
-							"value": "2022-07-13T20:00:00.000Z"
+						"url": {
+							"raw": "{{protocol}}://{{apiUrl}}/{{stage}}/services",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"{{stage}}",
+								"services"
+							]
 						}
-					]
+					},
+					"response": []
+				},
+				{
+					"name": "getServices",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{protocol}}://{{apiUrl}}/{{stage}}/services",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"{{stage}}",
+								"services"
+							]
+						}
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
 		}
 	]
 }

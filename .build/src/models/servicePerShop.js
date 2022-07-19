@@ -12,30 +12,30 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Appointment = void 0;
+exports.ServicePerShop = void 0;
 const dynamodb_data_mapper_annotations_1 = require("@aws/dynamodb-data-mapper-annotations");
 const config_json_1 = __importDefault(require("../../config.json"));
-const tableName = config_json_1.default.PRIMO_APPOINTMENT_TABLE;
-let Appointment = class Appointment {
+const tableName = config_json_1.default.PRIMO_SERVICES_PER_SHOP_TABLE;
+let ServicePerShop = class ServicePerShop {
 };
 __decorate([
     (0, dynamodb_data_mapper_annotations_1.hashKey)(),
     __metadata("design:type", String)
-], Appointment.prototype, "employeeId", void 0);
+], ServicePerShop.prototype, "serviceId", void 0);
 __decorate([
     (0, dynamodb_data_mapper_annotations_1.rangeKey)(),
     __metadata("design:type", String)
-], Appointment.prototype, "appointmentStartTime", void 0);
+], ServicePerShop.prototype, "shopId", void 0);
+__decorate([
+    (0, dynamodb_data_mapper_annotations_1.attribute)(),
+    __metadata("design:type", Number)
+], ServicePerShop.prototype, "durationInMinutes", void 0);
 __decorate([
     (0, dynamodb_data_mapper_annotations_1.attribute)(),
     __metadata("design:type", String)
-], Appointment.prototype, "userId", void 0);
-__decorate([
-    (0, dynamodb_data_mapper_annotations_1.attribute)(),
-    __metadata("design:type", String)
-], Appointment.prototype, "serviceId", void 0);
-Appointment = __decorate([
+], ServicePerShop.prototype, "price", void 0);
+ServicePerShop = __decorate([
     (0, dynamodb_data_mapper_annotations_1.table)(tableName)
-], Appointment);
-exports.Appointment = Appointment;
-//# sourceMappingURL=appointment.js.map
+], ServicePerShop);
+exports.ServicePerShop = ServicePerShop;
+//# sourceMappingURL=servicePerShop.js.map
