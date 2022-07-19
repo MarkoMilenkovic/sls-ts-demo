@@ -1,8 +1,10 @@
 import { DataMapper } from "@aws/dynamodb-data-mapper";
 import gen2array from "../libs/array-helper";
 import { Appointment } from "../models/appointment";
-import { beginsWith, AttributePath, FunctionExpression, ConditionExpression } from '@aws/dynamodb-expressions';
-import { UpdateOptions } from "@aws/dynamodb-data-mapper";
+import {
+    beginsWith, AttributePath, FunctionExpression, ConditionExpression, lessThanOrEqualTo, greaterThanOrEqualTo
+} from '@aws/dynamodb-expressions';
+import { UpdateOptions, QueryOptions } from "@aws/dynamodb-data-mapper";
 
 class AppointmentService {
     constructor(
@@ -58,6 +60,26 @@ class AppointmentService {
             startDateTime = newDateTime;
         }
         return await gen2array(this.mapper.batchPut(appointmentsToSave));
+    }
+
+    async getAppointmentsForUser(date: string, userId: string, upcoming: Boolean, limit: number = 1): Promise<Appointment[]> {
+        let equalsExpressionPredicate;
+        if (upcoming) {
+            equalsExpressionPredicate = greaterThanOrEqualTo(date);
+        } else {
+            equalsExpressionPredicate = lessThanOrEqualTo(date);
+        }
+        const equalsExpression: ConditionExpression = {
+            ...equalsExpressionPredicate,
+            subject: 'appointmentStartTime'
+        };
+        const options: QueryOptions = {
+            indexName: "userId-index",
+            filter: equalsExpression,
+            limit: limit,
+            scanIndexForward: false
+        }
+        return await gen2array(this.mapper.query(Appointment, { userId }, options));
     }
 
 }

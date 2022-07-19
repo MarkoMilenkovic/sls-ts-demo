@@ -52,6 +52,18 @@ functions:
       - http:
           path: appointment
           method: put
+  getUpcomingAppointments:
+    handler: src/functions/appointments/getUpcomingAppointments.handler
+    events:
+      - http:
+          path: appointment/upcoming
+          method: get
+  getPreviousAppointments:
+    handler: src/functions/appointments/getPreviousAppointments.handler
+    events:
+      - http:
+          path: appointment/previous
+          method: get
   queryShopsByRadius:
     handler: src/functions/shops/queryShopsByRadius.handler
     events:
@@ -74,11 +86,23 @@ resources:
           AttributeType: "S"
         - AttributeName: "appointmentStartTime"
           AttributeType: "S"
+        - AttributeName: "userId"
+          AttributeType: "S"
         KeySchema:
         - AttributeName: "employeeId"
           KeyType: "HASH"
         - AttributeName: appointmentStartTime
           KeyType: "RANGE"  
+        GlobalSecondaryIndexes:
+          - IndexName: "userId-index"
+            KeySchema:
+              - AttributeName: "userId"
+                KeyType: "HASH"
+            Projection:
+              ProjectionType: "ALL"
+            ProvisionedThroughput:
+              ReadCapacityUnits: 1
+              WriteCapacityUnits: 1
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1

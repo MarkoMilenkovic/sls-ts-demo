@@ -54,6 +54,24 @@ class AppointmentService {
         }
         return await (0, array_helper_1.default)(this.mapper.batchPut(appointmentsToSave));
     }
+    async getAppointmentsForUser(date, userId, upcoming, limit = 1) {
+        console.log("******: " + date);
+        let equalsExpressionPredicate;
+        if (upcoming) {
+            equalsExpressionPredicate = (0, dynamodb_expressions_1.greaterThanOrEqualTo)(date);
+        }
+        else {
+            equalsExpressionPredicate = (0, dynamodb_expressions_1.lessThanOrEqualTo)(date);
+        }
+        const equalsExpression = Object.assign(Object.assign({}, equalsExpressionPredicate), { subject: 'appointmentStartTime' });
+        const options = {
+            indexName: "userId-index",
+            filter: equalsExpression,
+            limit: limit,
+            scanIndexForward: false
+        };
+        return await (0, array_helper_1.default)(this.mapper.query(appointment_1.Appointment, { userId }, options));
+    }
 }
 function addMinutes(date, minutes) {
     return new Date(date.getTime() + minutes * 60000);

@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "9b67b4b5-d701-486d-8790-a14df5c6c629",
+		"_postman_id": "d7556a21-1ab6-456e-aa38-33db58b21ba5",
 		"name": "Serverless Primo Practice",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -12,7 +12,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"employeeId\": \"lemi1\",\n    \"appointmentStartTime\": \"2022-07-11T08:15:00.000Z\",\n    \"userId\": \"1\"\n}",
+					"raw": "{\n    \"employeeId\": \"lemi1\",\n    \"appointmentStartTime\": \"2022-07-191T08:15:00.000Z\",\n    \"userId\": \"1\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -20,14 +20,13 @@
 					}
 				},
 				"url": {
-					"raw": "{{protocol}}://{{apiUrl}}/{{stage}}/dev/appointment",
+					"raw": "{{protocol}}://{{apiUrl}}/{{stage}}/appointment",
 					"protocol": "{{protocol}}",
 					"host": [
 						"{{apiUrl}}"
 					],
 					"path": [
 						"{{stage}}",
-						"dev",
 						"appointment"
 					]
 				}
@@ -100,14 +99,13 @@
 					}
 				},
 				"url": {
-					"raw": "{{protocol}}://{{apiUrl}}/{{stage}}/dev/shops",
+					"raw": "{{protocol}}://{{apiUrl}}/{{stage}}/shops",
 					"protocol": "{{protocol}}",
 					"host": [
 						"{{apiUrl}}"
 					],
 					"path": [
 						"{{stage}}",
-						"dev",
 						"shops"
 					]
 				}
@@ -153,6 +151,74 @@
 						{
 							"key": "radius",
 							"value": "2400"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getPreviousAppointments",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{protocol}}://{{apiUrl}}/{{stage}}/appointment/previous?userId=1&limit=1&date=2022-07-13T20:00:00.000Z",
+					"protocol": "{{protocol}}",
+					"host": [
+						"{{apiUrl}}"
+					],
+					"path": [
+						"{{stage}}",
+						"appointment",
+						"previous"
+					],
+					"query": [
+						{
+							"key": "userId",
+							"value": "1"
+						},
+						{
+							"key": "limit",
+							"value": "1"
+						},
+						{
+							"key": "date",
+							"value": "2022-07-13T20:00:00.000Z"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getUpcomingAppointments",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{protocol}}://{{apiUrl}}/{{stage}}/appointment/upcoming?userId=1&limit=1&date=2022-07-13T20:00:00.000Z",
+					"protocol": "{{protocol}}",
+					"host": [
+						"{{apiUrl}}"
+					],
+					"path": [
+						"{{stage}}",
+						"appointment",
+						"upcoming"
+					],
+					"query": [
+						{
+							"key": "userId",
+							"value": "1"
+						},
+						{
+							"key": "limit",
+							"value": "1"
+						},
+						{
+							"key": "date",
+							"value": "2022-07-13T20:00:00.000Z"
 						}
 					]
 				}
