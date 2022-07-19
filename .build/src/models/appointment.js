@@ -15,7 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Appointment = void 0;
 const dynamodb_data_mapper_annotations_1 = require("@aws/dynamodb-data-mapper-annotations");
 const config_json_1 = __importDefault(require("../../config.json"));
-const tableName = config_json_1.default.DYNAMODB_TABLE;
+const tableName = config_json_1.default.PRIMO_APPOINTMENT_TABLE;
 //todo: add serviceId
 let Appointment = class Appointment {
 };

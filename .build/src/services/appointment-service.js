@@ -55,7 +55,6 @@ class AppointmentService {
         return await (0, array_helper_1.default)(this.mapper.batchPut(appointmentsToSave));
     }
     async getAppointmentsForUser(date, userId, upcoming, limit = 1) {
-        console.log("******: " + date);
         let equalsExpressionPredicate;
         if (upcoming) {
             equalsExpressionPredicate = (0, dynamodb_expressions_1.greaterThanOrEqualTo)(date);

@@ -1,6 +1,6 @@
 {
     "REGION": "eu-central-1",
     "STAGE": "dev",
-    "DYNAMODB_TABLE": "lemilica-zakazivanje-test",
+    "PRIMO_APPOINTMENT_TABLE": "lemilica-zakazivanje-test",
     "PRIMO_SHOP_TABLE": "lemilica-geolocation"
 }

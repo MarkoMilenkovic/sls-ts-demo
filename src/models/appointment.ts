@@ -5,7 +5,7 @@ import {
     table
 } from "@aws/dynamodb-data-mapper-annotations";
 import config from "../../config.json";
-const tableName = config.DYNAMODB_TABLE;
+const tableName = config.PRIMO_APPOINTMENT_TABLE;
 
 //todo: add serviceId
 @table(tableName)
