@@ -2,6 +2,7 @@ import { APIGatewayProxyResult, APIGatewayEvent } from 'aws-lambda';
 import { formatJSONResponse } from '../../libs/api-gateway';
 import {appointmentService} from '../../services';
 
+//todo: refactor with  using new table in db - employeeWorkHours
 export const handler = async (event: APIGatewayEvent): Promise<APIGatewayProxyResult> => {
     const employeeId = event.pathParameters?.employeeId as string;
     const date = event.pathParameters?.date as string;

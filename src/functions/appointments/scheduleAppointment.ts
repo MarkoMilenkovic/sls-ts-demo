@@ -4,17 +4,18 @@ import {appointmentService} from "../../services";
 
 export const handler = async (event: APIGatewayEvent): Promise<APIGatewayProxyResult> => {
     const body = JSON.parse(event.body as string);
-    const { employeeId, appointmentStartTime, userId } = body;
+    const { employeeId, appointmentStartTime, userId, serviceId } = body;
 
     let statusCode;
     let response;
     try {
-        const appointment = await appointmentService.scheduleAppointment(employeeId, appointmentStartTime, userId);
+        const appointment = await 
+            appointmentService.scheduleAppointment(employeeId, appointmentStartTime, userId, serviceId);
 
         response = appointment;
         statusCode = 200;
     } catch (error: any) {
-        if (error.code === 'ConditionalCheckFailedException') {
+        if (error.code === 'ConditionalCheckFailedException' || error.code === 'TransactionCanceledException') {
             response = { "message": "Appointment not available!" };
             statusCode = 400;
         } else {

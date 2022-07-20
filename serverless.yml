@@ -92,13 +92,13 @@ functions:
     handler: src/functions/shops/addServicesToShop.handler
     events:
       - http:
-          path: services/{shopId}
+          path: shop/{shopId}/services
           method: post
   getServicesForShop:
     handler: src/functions/shops/getServicesForShop.handler
     events:
       - http:
-          path: services/{shopId}
+          path: shop/{shopId}/services
           method: get
 resources:
   Resources:

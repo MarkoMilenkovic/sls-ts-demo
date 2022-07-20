@@ -43,6 +43,13 @@ class PrimoServices {
         return await gen2array(this.mapper.query(ServicePerShop, { shopId }, options));
     }
 
+    async getServiceForShop(shopId: string, serviceId: string): Promise<ServicePerShop> {
+        const servicePerShop = new ServicePerShop();
+        servicePerShop.serviceId = serviceId;
+        servicePerShop.shopId = shopId;
+        return await this.mapper.get(servicePerShop); 
+    }
+
 }
 
 export default PrimoServices;

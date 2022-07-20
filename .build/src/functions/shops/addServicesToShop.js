@@ -6,9 +6,12 @@ const services_1 = require("../../services");
 const handler = async (event) => {
     var _a;
     const shopId = (_a = event.pathParameters) === null || _a === void 0 ? void 0 : _a.shopId;
-    const body = JSON.parse(event.body);
+    const services = JSON.parse(event.body);
+    if (services.filter(e => !e.durationInMinutes || !e.price).length > 0) {
+        return (0, api_gateway_1.formatJSONResponse)(400, { "message": "Duration and price are mandatory" });
+    }
     try {
-        const shop = await services_1.primoServices.addServicesToShop(shopId, body);
+        const shop = await services_1.primoServices.addServicesToShop(shopId, services);
         return (0, api_gateway_1.formatJSONResponse)(200, shop);
     }
     catch (error) {

@@ -2,49 +2,111 @@ import { DataMapper } from "@aws/dynamodb-data-mapper";
 import gen2array from "../libs/array-helper";
 import { Appointment } from "../models/appointment";
 import {
-    beginsWith, AttributePath, FunctionExpression, ConditionExpression, lessThanOrEqualTo, greaterThanOrEqualTo
+    equals, between, beginsWith, AttributePath, AttributeValue, FunctionExpression, ConditionExpression, lessThanOrEqualTo, greaterThanOrEqualTo
 } from '@aws/dynamodb-expressions';
-import { UpdateOptions, QueryOptions } from "@aws/dynamodb-data-mapper";
+import { QueryOptions } from "@aws/dynamodb-data-mapper";
+import PrimoServices from "./primo-services";
+import { DynamoDB } from "aws-sdk";
+import config from "../../config.json";
+
+const appointmentTableName = config.PRIMO_APPOINTMENT_TABLE;
 
 class AppointmentService {
     constructor(
-        private readonly mapper: DataMapper
+        private readonly mapper: DataMapper,
+        private readonly primoServices: PrimoServices,
+        private readonly client: DynamoDB
     ) { }
 
     async getAvailableAppointments(employeeId: string, appointmentStartTime: string): Promise<Appointment[]> {
         const keyCondition = { employeeId: employeeId, appointmentStartTime: beginsWith(appointmentStartTime) };
         const filterExpression = new FunctionExpression('attribute_not_exists', new AttributePath('userId'));
-
         return await gen2array(this.mapper.query(Appointment, keyCondition, { filter: filterExpression }));
     }
 
     //todo: check if employeeId is valid -> userId will be comming from JWT so validation is not implemented
-    //todo: check dynamodb transactions
-    //todo: delete next appointments from table
-    async scheduleAppointment(employeeId: string, appointmentStartTime: string, userId: string): Promise<Appointment> {
-        const appointment = new Appointment();
-        appointment.employeeId = employeeId;
-        appointment.appointmentStartTime = appointmentStartTime;
-        appointment.userId = userId;
+    async scheduleAppointment(employeeId: string, appointmentStartTime: string, userId: string, serviceId: string): Promise<Appointment> {
+        //todo: get shopId from dynamo
+        const shopId = "1a377f59-0b29-40be-909b-d8218239ad76";
+        const servicePerShop = await this.primoServices.getServiceForShop(shopId, serviceId);
+        const duration: number = servicePerShop.durationInMinutes!;
+
+        const appointmentsToDelete = await this.getAppoitmentsToDelete(employeeId, appointmentStartTime, duration);
+
+        const myList: DynamoDB.Types.TransactWriteItemList = [];
+        myList.push({
+            Put: {
+                TableName: appointmentTableName,
+                Item: {
+                    employeeId: { S: employeeId },
+                    appointmentStartTime: { S: appointmentStartTime },
+                    userId: {S: userId},
+                    serviceId: {S: serviceId}
+                },
+                ConditionExpression: 'attribute_not_exists(userId) AND ' +
+                    'attribute_not_exists(employeeId) AND ' +
+                    'attribute_not_exists(appointmentStartTime)',
+                // UpdateExpression: 'SET userId = :userIdVal',
+                // ExpressionAttributeValues: {
+                //     ':userIdVal': { S: userId }
+                // }
+            }
+        });
+        for (const appointment of appointmentsToDelete) {
+            const toDelete = {
+                Delete: {
+                    TableName: appointmentTableName,
+                    ConditionExpression: 'attribute_not_exists(userId) ',
+                    Key: {
+                        employeeId: { S: employeeId },
+                        appointmentStartTime: { S: appointment.appointmentStartTime },
+                    },
+                }
+
+            };
+            myList.push(toDelete);
+        }
+
+        await this.client.transactWriteItems({ TransactItems: myList }).promise();
+
+        return {
+            employeeId,
+            appointmentStartTime,
+            serviceId,
+            userId
+        }
+    }
+
+    async getAppoitmentsToDelete(employeeId: string, startDateTime: string, duration: number): Promise<Appointment[]> {
+        let lowerBound = addMinutes(new Date(startDateTime), 1).toISOString();
+        let upperBound = addMinutes(new Date(startDateTime), (duration - 1)).toISOString();
+
+        let equalsExpressionPredicate =
+            between(new AttributeValue({ S: lowerBound }), new AttributeValue({ S: upperBound }));
+        const equalsExpression: ConditionExpression = {
+            ...equalsExpressionPredicate,
+            subject: 'appointmentStartTime'
+        };
+
+        let employeeIdExpressionPredicate = equals(employeeId);
+        const employeeIdExpression: ConditionExpression = {
+            ...employeeIdExpressionPredicate,
+            subject: 'employeeId'
+        };
 
         const andExpression: ConditionExpression = {
             type: 'And',
             conditions: [
-                new FunctionExpression('attribute_not_exists', new AttributePath('userId')),
-                new FunctionExpression('attribute_exists', new AttributePath('employeeId')),
-                new FunctionExpression('attribute_exists', new AttributePath('appointmentStartTime'))
+                equalsExpression,
+                employeeIdExpression
             ]
         };
 
-        const options: UpdateOptions = {
-            condition: andExpression
-        }
-
-        return await this.mapper.update(appointment, options);
+        return await gen2array(this.mapper.query(Appointment, andExpression));
     }
 
     //todo: check if employeeId is valid 
-    //todo: calculate latest available time: something like 
+    //todo: calculate latest available time 
     async generateAppointments(employeeId: string, startDateTime: Date, endDateTime: Date): Promise<Appointment[]> {
         let appointmentsToSave = [];
         const firstAppointment = new Appointment();

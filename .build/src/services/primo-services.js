@@ -40,6 +40,12 @@ class PrimoServices {
         };
         return await (0, array_helper_1.default)(this.mapper.query(servicePerShop_1.ServicePerShop, { shopId }, options));
     }
+    async getServiceForShop(shopId, serviceId) {
+        const servicePerShop = new servicePerShop_1.ServicePerShop();
+        servicePerShop.serviceId = serviceId;
+        servicePerShop.shopId = shopId;
+        return await this.mapper.get(servicePerShop);
+    }
 }
 exports.default = PrimoServices;
 //# sourceMappingURL=primo-services.js.map

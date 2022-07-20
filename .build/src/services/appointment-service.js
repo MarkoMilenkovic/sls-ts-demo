@@ -6,9 +6,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const array_helper_1 = __importDefault(require("../libs/array-helper"));
 const appointment_1 = require("../models/appointment");
 const dynamodb_expressions_1 = require("@aws/dynamodb-expressions");
+const config_json_1 = __importDefault(require("../../config.json"));
+const appointmentTableName = config_json_1.default.PRIMO_APPOINTMENT_TABLE;
 class AppointmentService {
-    constructor(mapper) {
+    constructor(mapper, primoServices, client) {
         this.mapper = mapper;
+        this.primoServices = primoServices;
+        this.client = client;
     }
     async getAvailableAppointments(employeeId, appointmentStartTime) {
         const keyCondition = { employeeId: employeeId, appointmentStartTime: (0, dynamodb_expressions_1.beginsWith)(appointmentStartTime) };
@@ -16,28 +20,76 @@ class AppointmentService {
         return await (0, array_helper_1.default)(this.mapper.query(appointment_1.Appointment, keyCondition, { filter: filterExpression }));
     }
     //todo: check if employeeId is valid -> userId will be comming from JWT so validation is not implemented
-    //todo: check dynamodb transactions
-    //todo: delete next appointments from table
-    async scheduleAppointment(employeeId, appointmentStartTime, userId) {
-        const appointment = new appointment_1.Appointment();
-        appointment.employeeId = employeeId;
-        appointment.appointmentStartTime = appointmentStartTime;
-        appointment.userId = userId;
+    async scheduleAppointment(employeeId, appointmentStartTime, userId, serviceId) {
+        const appTest = new appointment_1.Appointment();
+        appTest.employeeId = employeeId;
+        appTest.userId = userId;
+        appTest.serviceId = serviceId;
+        appTest.appointmentStartTime = "2022-07-23T09:30:00.000Z";
+        await this.mapper.put(appTest);
+        //todo: get shopId from dynamo
+        const shopId = "1a377f59-0b29-40be-909b-d8218239ad76";
+        const servicePerShop = await this.primoServices.getServiceForShop(shopId, serviceId);
+        const duration = servicePerShop.durationInMinutes;
+        const appointmentsToDelete = await this.getAppoitmentsToDelete(employeeId, appointmentStartTime, duration);
+        const myList = [];
+        myList.push({
+            Put: {
+                TableName: appointmentTableName,
+                Item: {
+                    employeeId: { S: employeeId },
+                    appointmentStartTime: { S: appointmentStartTime },
+                    userId: { S: userId },
+                    serviceId: { S: serviceId }
+                },
+                ConditionExpression: 'attribute_not_exists(userId) AND ' +
+                    'attribute_not_exists(employeeId) AND ' +
+                    'attribute_not_exists(appointmentStartTime)',
+                // UpdateExpression: 'SET userId = :userIdVal',
+                // ExpressionAttributeValues: {
+                //     ':userIdVal': { S: userId }
+                // }
+            }
+        });
+        for (const appointment of appointmentsToDelete) {
+            const toDelete = {
+                Delete: {
+                    TableName: appointmentTableName,
+                    ConditionExpression: 'attribute_not_exists(userId) ',
+                    Key: {
+                        employeeId: { S: employeeId },
+                        appointmentStartTime: { S: appointment.appointmentStartTime },
+                    },
+                }
+            };
+            myList.push(toDelete);
+        }
+        await this.client.transactWriteItems({ TransactItems: myList }).promise();
+        return {
+            employeeId,
+            appointmentStartTime,
+            serviceId,
+            userId
+        };
+    }
+    async getAppoitmentsToDelete(employeeId, startDateTime, duration) {
+        let lowerBound = addMinutes(new Date(startDateTime), 1).toISOString();
+        let upperBound = addMinutes(new Date(startDateTime), (duration - 1)).toISOString();
+        let equalsExpressionPredicate = (0, dynamodb_expressions_1.between)(new dynamodb_expressions_1.AttributeValue({ S: lowerBound }), new dynamodb_expressions_1.AttributeValue({ S: upperBound }));
+        const equalsExpression = Object.assign(Object.assign({}, equalsExpressionPredicate), { subject: 'appointmentStartTime' });
+        let employeeIdExpressionPredicate = (0, dynamodb_expressions_1.equals)(employeeId);
+        const employeeIdExpression = Object.assign(Object.assign({}, employeeIdExpressionPredicate), { subject: 'employeeId' });
         const andExpression = {
             type: 'And',
             conditions: [
-                new dynamodb_expressions_1.FunctionExpression('attribute_not_exists', new dynamodb_expressions_1.AttributePath('userId')),
-                new dynamodb_expressions_1.FunctionExpression('attribute_exists', new dynamodb_expressions_1.AttributePath('employeeId')),
-                new dynamodb_expressions_1.FunctionExpression('attribute_exists', new dynamodb_expressions_1.AttributePath('appointmentStartTime'))
+                equalsExpression,
+                employeeIdExpression
             ]
         };
-        const options = {
-            condition: andExpression
-        };
-        return await this.mapper.update(appointment, options);
+        return await (0, array_helper_1.default)(this.mapper.query(appointment_1.Appointment, andExpression));
     }
     //todo: check if employeeId is valid 
-    //todo: calculate latest available time: something like 
+    //todo: calculate latest available time 
     async generateAppointments(employeeId, startDateTime, endDateTime) {
         let appointmentsToSave = [];
         const firstAppointment = new appointment_1.Appointment();

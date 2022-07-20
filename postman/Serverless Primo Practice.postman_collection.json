@@ -232,6 +232,57 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "getServicesForShop",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{protocol}}://{{apiUrl}}/{{stage}}/shop/1a377f59-0b29-40be-909b-d8218239ad76/services",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"{{stage}}",
+								"shop",
+								"1a377f59-0b29-40be-909b-d8218239ad76",
+								"services"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "addServicesToShop",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "[\n    {\n        \"serviceId\"  : \"e1fea39c-b0bf-490c-aa98-51425f059491\",\n        \"durationInMinutes\": 45,\n        \"price\": \"1800 RSD\"\n    }\n]",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{protocol}}://{{apiUrl}}/{{stage}}/shop/1a377f59-0b29-40be-909b-d8218239ad76/services",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"{{stage}}",
+								"shop",
+								"1a377f59-0b29-40be-909b-d8218239ad76",
+								"services"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
