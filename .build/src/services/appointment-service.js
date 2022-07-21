@@ -9,9 +9,10 @@ const dynamodb_expressions_1 = require("@aws/dynamodb-expressions");
 const config_json_1 = __importDefault(require("../../config.json"));
 const appointmentTableName = config_json_1.default.PRIMO_APPOINTMENT_TABLE;
 class AppointmentService {
-    constructor(mapper, primoServices, client) {
+    constructor(mapper, primoServices, employeeWorkHoursService, client) {
         this.mapper = mapper;
         this.primoServices = primoServices;
+        this.employeeWorkHoursService = employeeWorkHoursService;
         this.client = client;
     }
     async getAvailableAppointments(employeeId, appointmentStartTime) {
@@ -21,16 +22,15 @@ class AppointmentService {
     }
     //todo: check if employeeId is valid -> userId will be comming from JWT so validation is not implemented
     async scheduleAppointment(employeeId, appointmentStartTime, userId, serviceId) {
-        const appTest = new appointment_1.Appointment();
-        appTest.employeeId = employeeId;
-        appTest.userId = userId;
-        appTest.serviceId = serviceId;
-        appTest.appointmentStartTime = "2022-07-23T09:30:00.000Z";
-        await this.mapper.put(appTest);
         //todo: get shopId from dynamo
         const shopId = "1a377f59-0b29-40be-909b-d8218239ad76";
         const servicePerShop = await this.primoServices.getServiceForShop(shopId, serviceId);
         const duration = servicePerShop.durationInMinutes;
+        const appointmentEndTime = addMinutes(new Date(appointmentStartTime), duration).toISOString();
+        const isTimeValid = await this.employeeWorkHoursService.validateWorkHours(employeeId, appointmentStartTime, appointmentEndTime);
+        if (!isTimeValid) {
+            throw { code: 'OutsideWorkHours' };
+        }
         const appointmentsToDelete = await this.getAppoitmentsToDelete(employeeId, appointmentStartTime, duration);
         const myList = [];
         myList.push({
@@ -45,10 +45,6 @@ class AppointmentService {
                 ConditionExpression: 'attribute_not_exists(userId) AND ' +
                     'attribute_not_exists(employeeId) AND ' +
                     'attribute_not_exists(appointmentStartTime)',
-                // UpdateExpression: 'SET userId = :userIdVal',
-                // ExpressionAttributeValues: {
-                //     ':userIdVal': { S: userId }
-                // }
             }
         });
         for (const appointment of appointmentsToDelete) {
@@ -68,8 +64,9 @@ class AppointmentService {
         return {
             employeeId,
             appointmentStartTime,
+            appointmentEndTime,
             serviceId,
-            userId
+            userId,
         };
     }
     async getAppoitmentsToDelete(employeeId, startDateTime, duration) {

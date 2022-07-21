@@ -5,19 +5,16 @@ import {
     table
 } from "@aws/dynamodb-data-mapper-annotations";
 import config from "../../config.json";
-const tableName = config.PRIMO_APPOINTMENT_TABLE;
+const tableName = config.PRIMO_EMPLOYEE_WORK_HOURS_TABLE;
 
 @table(tableName)
-export class Appointment {
+export class EmployeeWorkHours {
     @hashKey()
     employeeId?: string;
     @rangeKey()
-    appointmentStartTime?: string;
+    startDate?: string;
     @attribute()
-    userId?: string;
+    endDate?: string;
     @attribute()
-    serviceId?: string;
-    
-    appointmentEndTime?: string;
-
+    dailyHours?: string;
 }

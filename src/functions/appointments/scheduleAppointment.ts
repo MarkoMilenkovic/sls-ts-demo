@@ -18,7 +18,11 @@ export const handler = async (event: APIGatewayEvent): Promise<APIGatewayProxyRe
         if (error.code === 'ConditionalCheckFailedException' || error.code === 'TransactionCanceledException') {
             response = { "message": "Appointment not available!" };
             statusCode = 400;
-        } else {
+        } else if(error.code === 'OutsideWorkHours'){
+            response = { "message": "Outside Work Hours for employee!" };
+            statusCode = 400;
+        }
+        else {
             console.log(error);
             response = { "message": "Something went wrong!" };
             statusCode = 500;

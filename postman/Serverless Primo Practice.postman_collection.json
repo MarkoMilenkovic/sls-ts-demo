@@ -337,6 +337,41 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "employees",
+			"item": [
+				{
+					"name": "addWorkHoursForEmployee",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"startDate\": \"2022-07-25\",\n    \"endDate\": \"2022-07-30\",\n    \"dailyHours\": \"15:00:00.000Z-22:00:00.000Z\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{protocol}}://{{apiUrl}}/{{stage}}/employee/1/hours",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"{{stage}}",
+								"employee",
+								"1",
+								"hours"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	]
 }

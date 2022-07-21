@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.handler = void 0;
 const api_gateway_1 = require("../../libs/api-gateway");
 const services_1 = require("../../services");
+//todo: refactor with  using new table in db - employeeWorkHours
 const handler = async (event) => {
     var _a, _b;
     const employeeId = (_a = event.pathParameters) === null || _a === void 0 ? void 0 : _a.employeeId;

@@ -18,6 +18,10 @@ const handler = async (event) => {
             response = { "message": "Appointment not available!" };
             statusCode = 400;
         }
+        else if (error.code === 'OutsideWorkHours') {
+            response = { "message": "Outside Work Hours for employee!" };
+            statusCode = 400;
+        }
         else {
             console.log(error);
             response = { "message": "Something went wrong!" };

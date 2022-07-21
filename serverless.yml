@@ -100,6 +100,12 @@ functions:
       - http:
           path: shop/{shopId}/services
           method: get
+  addWorkHoursForEmployee:
+    handler: src/functions/work-hours/addWorkHoursForEmployee.handler
+    events:
+      - http:
+          path: employee/{employeeId}/hours
+          method: post
 resources:
   Resources:
     AppointmentTable:
@@ -209,3 +215,20 @@ resources:
               ReadCapacityUnits: 1
               WriteCapacityUnits: 1
         TableName: ${file(config.json):PRIMO_SERVICES_PER_SHOP_TABLE}
+    PrimoEmployeeWorkHoursTable:
+      Type: "AWS::DynamoDB::Table"
+      Properties:
+        AttributeDefinitions:
+        - AttributeName: "employeeId"
+          AttributeType: "S"
+        - AttributeName: "startDate"
+          AttributeType: "S"
+        KeySchema:
+        - AttributeName: "employeeId"
+          KeyType: "HASH"
+        - AttributeName: "startDate"
+          KeyType: "RANGE"  
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: ${file(config.json):PRIMO_EMPLOYEE_WORK_HOURS_TABLE}
