@@ -34,12 +34,6 @@ custom:
       onStart: true
 
 functions:
-  getAppointments:
-    handler: src/functions/appointments/getAvailableAppointments.handler
-    events:
-      - http:
-          path: appointment/employee/{employeeId}/date/{date}
-          method: get
   generateAppointments:
     handler: src/functions/appointments/generateAppointments.hanler
     events:
@@ -106,6 +100,12 @@ functions:
       - http:
           path: employee/{employeeId}/hours
           method: post
+  getWorkHoursForEmployee:
+    handler: src/functions/work-hours/getWorkHoursForEmployee.handler
+    events:
+      - http:
+          path: employee/{employeeId}/date/{date}
+          method: get
 resources:
   Resources:
     AppointmentTable:

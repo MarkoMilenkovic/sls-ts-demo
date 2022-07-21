@@ -20,9 +20,9 @@ class AppointmentService {
         private readonly client: DynamoDB
     ) { }
 
-    async getAvailableAppointments(employeeId: string, appointmentStartTime: string): Promise<Appointment[]> {
+    async getScheduledAppointments(employeeId: string, appointmentStartTime: string): Promise<Appointment[]> {
         const keyCondition = { employeeId: employeeId, appointmentStartTime: beginsWith(appointmentStartTime) };
-        const filterExpression = new FunctionExpression('attribute_not_exists', new AttributePath('userId'));
+        const filterExpression = new FunctionExpression('attribute_exists', new AttributePath('userId'));
         return await gen2array(this.mapper.query(Appointment, keyCondition, { filter: filterExpression }));
     }
 
@@ -51,7 +51,8 @@ class AppointmentService {
                     employeeId: { S: employeeId },
                     appointmentStartTime: { S: appointmentStartTime },
                     userId: { S: userId },
-                    serviceId: { S: serviceId }
+                    serviceId: { S: serviceId },
+                    appointmentEndTime: {S: appointmentEndTime}
                 },
                 ConditionExpression: 'attribute_not_exists(userId) AND ' +
                     'attribute_not_exists(employeeId) AND ' +

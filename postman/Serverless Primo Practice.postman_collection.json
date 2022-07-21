@@ -37,29 +37,6 @@
 					"response": []
 				},
 				{
-					"name": "getAvailableAppointments",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{protocol}}://{{apiUrl}}/{{stage}}/appointment/employee/joca/date/2022-07-13",
-							"protocol": "{{protocol}}",
-							"host": [
-								"{{apiUrl}}"
-							],
-							"path": [
-								"{{stage}}",
-								"appointment",
-								"employee",
-								"joca",
-								"date",
-								"2022-07-13"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "generateAppointments",
 					"request": {
 						"method": "POST",
@@ -127,7 +104,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{protocol}}://{{apiUrl}}/{{stage}}/appointment/upcoming?userId=1&limit=1&date=2022-07-13T20:00:00.000Z",
+							"raw": "{{protocol}}://{{apiUrl}}/{{stage}}/appointment/upcoming?userId=1&limit=100&date=2022-07-23T08:00:00.000Z",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{apiUrl}}"
@@ -144,11 +121,11 @@
 								},
 								{
 									"key": "limit",
-									"value": "1"
+									"value": "100"
 								},
 								{
 									"key": "date",
-									"value": "2022-07-13T20:00:00.000Z"
+									"value": "2022-07-23T08:00:00.000Z"
 								}
 							]
 						}
@@ -366,6 +343,28 @@
 								"employee",
 								"1",
 								"hours"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getScheduleForEmployeeAndDate",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{protocol}}://{{apiUrl}}/{{stage}}/employee/1/date/2022-07-18",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"{{stage}}",
+								"employee",
+								"1",
+								"date",
+								"2022-07-18"
 							]
 						}
 					},

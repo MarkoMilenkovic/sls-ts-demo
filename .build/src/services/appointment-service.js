@@ -15,9 +15,9 @@ class AppointmentService {
         this.employeeWorkHoursService = employeeWorkHoursService;
         this.client = client;
     }
-    async getAvailableAppointments(employeeId, appointmentStartTime) {
+    async getScheduledAppointments(employeeId, appointmentStartTime) {
         const keyCondition = { employeeId: employeeId, appointmentStartTime: (0, dynamodb_expressions_1.beginsWith)(appointmentStartTime) };
-        const filterExpression = new dynamodb_expressions_1.FunctionExpression('attribute_not_exists', new dynamodb_expressions_1.AttributePath('userId'));
+        const filterExpression = new dynamodb_expressions_1.FunctionExpression('attribute_exists', new dynamodb_expressions_1.AttributePath('userId'));
         return await (0, array_helper_1.default)(this.mapper.query(appointment_1.Appointment, keyCondition, { filter: filterExpression }));
     }
     //todo: check if employeeId is valid -> userId will be comming from JWT so validation is not implemented
@@ -40,7 +40,8 @@ class AppointmentService {
                     employeeId: { S: employeeId },
                     appointmentStartTime: { S: appointmentStartTime },
                     userId: { S: userId },
-                    serviceId: { S: serviceId }
+                    serviceId: { S: serviceId },
+                    appointmentEndTime: { S: appointmentEndTime }
                 },
                 ConditionExpression: 'attribute_not_exists(userId) AND ' +
                     'attribute_not_exists(employeeId) AND ' +

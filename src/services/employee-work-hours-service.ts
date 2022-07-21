@@ -10,19 +10,7 @@ class EmployeeWorkHoursService {
     ) { }
 
     async validateWorkHours(employeeId: string, appointmentStartTime: string, appointmentEndTime: string,): Promise<Boolean> {
-        let lessThenOrEqualToExpressionPredicate =
-            lessThanOrEqualTo(new AttributeValue({ S: appointmentStartTime }));
-        let greaterThenOrEqualtToExpressionPredicate =
-            greaterThanOrEqualTo(new AttributeValue({ S: appointmentEndTime }));
-        const endDateExpression: ConditionExpression = {
-            ...greaterThenOrEqualtToExpressionPredicate,
-            subject: 'endDate'
-        };
-
-        const keyCondition = { employeeId: employeeId, startDate: lessThenOrEqualToExpressionPredicate };
-        const employeeWorkHoursArray =
-            await gen2array(this.mapper.query(EmployeeWorkHours, keyCondition, { filter: endDateExpression }));
-
+        const employeeWorkHoursArray = await this.getWorkHoursForEmployeeAndDates(employeeId, appointmentStartTime, appointmentEndTime);
         if (employeeWorkHoursArray.length === 0) {
             return false;
         }
@@ -49,6 +37,13 @@ class EmployeeWorkHoursService {
         return false;
     }
 
+    async isInRange(startTime: Date, endTime: Date, time: Date): Promise<Boolean> {
+        if (startTime <= time && endTime >= time) {
+            return true;
+        }
+        return false;
+    }
+
     async addWorkHoursForEmployee(employeeId: string, startDate: string,
         endDate: string, dailyHours: string): Promise<EmployeeWorkHours> {
         validateParameters(startDate, endDate, dailyHours);
@@ -60,11 +55,24 @@ class EmployeeWorkHoursService {
         return await this.mapper.put(employeeWorkHours);
     }
 
-    async isInRange(startTime: Date, endTime: Date, time: Date): Promise<Boolean> {
-        if (startTime <= time && endTime >= time) {
-            return true;
-        }
-        return false;
+    async getWorkHoursForEmployeeAndDate(employeeId: string, date: string): Promise<EmployeeWorkHours[]> {
+        return await this.getWorkHoursForEmployeeAndDates(employeeId, date, date);
+    }
+
+    async getWorkHoursForEmployeeAndDates(employeeId: string, startDate: string, endDate: string): Promise<EmployeeWorkHours[]> {
+        let lessThenOrEqualToExpressionPredicate =
+            lessThanOrEqualTo(new AttributeValue({ S: startDate }));
+        let greaterThenOrEqualtToExpressionPredicate =
+            greaterThanOrEqualTo(new AttributeValue({ S: endDate }));
+        const endDateExpression: ConditionExpression = {
+            ...greaterThenOrEqualtToExpressionPredicate,
+            subject: 'endDate'
+        };
+
+        const keyCondition = { employeeId: employeeId, startDate: lessThenOrEqualToExpressionPredicate };
+        const employeeWorkHoursArray =
+            await gen2array(this.mapper.query(EmployeeWorkHours, keyCondition, { filter: endDateExpression }));
+        return employeeWorkHoursArray;
     }
 
 }

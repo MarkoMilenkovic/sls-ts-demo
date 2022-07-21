@@ -34,6 +34,10 @@ __decorate([
     (0, dynamodb_data_mapper_annotations_1.attribute)(),
     __metadata("design:type", String)
 ], Appointment.prototype, "serviceId", void 0);
+__decorate([
+    (0, dynamodb_data_mapper_annotations_1.attribute)(),
+    __metadata("design:type", String)
+], Appointment.prototype, "appointmentEndTime", void 0);
 Appointment = __decorate([
     (0, dynamodb_data_mapper_annotations_1.table)(tableName)
 ], Appointment);

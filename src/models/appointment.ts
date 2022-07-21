@@ -17,7 +17,7 @@ export class Appointment {
     userId?: string;
     @attribute()
     serviceId?: string;
-    
+    @attribute()
     appointmentEndTime?: string;
 
 }

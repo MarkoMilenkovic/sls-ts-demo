@@ -12,11 +12,7 @@ class EmployeeWorkHoursService {
     }
     async validateWorkHours(employeeId, appointmentStartTime, appointmentEndTime) {
         var _a;
-        let lessThenOrEqualToExpressionPredicate = (0, dynamodb_expressions_1.lessThanOrEqualTo)(new dynamodb_expressions_1.AttributeValue({ S: appointmentStartTime }));
-        let greaterThenOrEqualtToExpressionPredicate = (0, dynamodb_expressions_1.greaterThanOrEqualTo)(new dynamodb_expressions_1.AttributeValue({ S: appointmentEndTime }));
-        const endDateExpression = Object.assign(Object.assign({}, greaterThenOrEqualtToExpressionPredicate), { subject: 'endDate' });
-        const keyCondition = { employeeId: employeeId, startDate: lessThenOrEqualToExpressionPredicate };
-        const employeeWorkHoursArray = await (0, array_helper_1.default)(this.mapper.query(employeeWorkHours_1.EmployeeWorkHours, keyCondition, { filter: endDateExpression }));
+        const employeeWorkHoursArray = await this.getWorkHoursForEmployeeAndDates(employeeId, appointmentStartTime, appointmentEndTime);
         if (employeeWorkHoursArray.length === 0) {
             return false;
         }
@@ -37,6 +33,12 @@ class EmployeeWorkHoursService {
         }
         return false;
     }
+    async isInRange(startTime, endTime, time) {
+        if (startTime <= time && endTime >= time) {
+            return true;
+        }
+        return false;
+    }
     async addWorkHoursForEmployee(employeeId, startDate, endDate, dailyHours) {
         validateParameters(startDate, endDate, dailyHours);
         const employeeWorkHours = new employeeWorkHours_1.EmployeeWorkHours();
@@ -46,11 +48,16 @@ class EmployeeWorkHoursService {
         employeeWorkHours.dailyHours = dailyHours;
         return await this.mapper.put(employeeWorkHours);
     }
-    async isInRange(startTime, endTime, time) {
-        if (startTime <= time && endTime >= time) {
-            return true;
-        }
-        return false;
+    async getWorkHoursForEmployeeAndDate(employeeId, date) {
+        return await this.getWorkHoursForEmployeeAndDates(employeeId, date, date);
+    }
+    async getWorkHoursForEmployeeAndDates(employeeId, startDate, endDate) {
+        let lessThenOrEqualToExpressionPredicate = (0, dynamodb_expressions_1.lessThanOrEqualTo)(new dynamodb_expressions_1.AttributeValue({ S: startDate }));
+        let greaterThenOrEqualtToExpressionPredicate = (0, dynamodb_expressions_1.greaterThanOrEqualTo)(new dynamodb_expressions_1.AttributeValue({ S: endDate }));
+        const endDateExpression = Object.assign(Object.assign({}, greaterThenOrEqualtToExpressionPredicate), { subject: 'endDate' });
+        const keyCondition = { employeeId: employeeId, startDate: lessThenOrEqualToExpressionPredicate };
+        const employeeWorkHoursArray = await (0, array_helper_1.default)(this.mapper.query(employeeWorkHours_1.EmployeeWorkHours, keyCondition, { filter: endDateExpression }));
+        return employeeWorkHoursArray;
     }
 }
 function validateParameters(startDate, endDate, dailyHours) {
