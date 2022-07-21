@@ -37,40 +37,12 @@
 					"response": []
 				},
 				{
-					"name": "generateAppointments",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"employeeId\": \"joca\",\n    \"startTime\": \"2022-07-13T08:00:00.000Z\",\n    \"endTime\": \"2022-07-13T16:00:00.000Z\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{protocol}}://{{apiUrl}}/{{stage}}/appointment",
-							"protocol": "{{protocol}}",
-							"host": [
-								"{{apiUrl}}"
-							],
-							"path": [
-								"{{stage}}",
-								"appointment"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "getPreviousAppointments",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{protocol}}://{{apiUrl}}/{{stage}}/appointment/previous?userId=1&limit=1&date=2022-07-13T20:00:00.000Z",
+							"raw": "{{protocol}}://{{apiUrl}}/{{stage}}/appointment/previous?userId=lemi&limit=1&date=2022-07-18T10:00:00.000Z",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{apiUrl}}"
@@ -83,7 +55,7 @@
 							"query": [
 								{
 									"key": "userId",
-									"value": "1"
+									"value": "lemi"
 								},
 								{
 									"key": "limit",
@@ -91,7 +63,7 @@
 								},
 								{
 									"key": "date",
-									"value": "2022-07-13T20:00:00.000Z"
+									"value": "2022-07-18T10:00:00.000Z"
 								}
 							]
 						}

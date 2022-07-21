@@ -34,12 +34,6 @@ custom:
       onStart: true
 
 functions:
-  generateAppointments:
-    handler: src/functions/appointments/generateAppointments.hanler
-    events:
-      - http:
-          path: appointment
-          method: post
   scheduleAppointment:
     handler: src/functions/appointments/scheduleAppointment.handler
     events:

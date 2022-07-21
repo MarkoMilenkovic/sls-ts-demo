@@ -86,24 +86,6 @@ class AppointmentService {
         };
         return await (0, array_helper_1.default)(this.mapper.query(appointment_1.Appointment, andExpression));
     }
-    //todo: check if employeeId is valid 
-    //todo: calculate latest available time 
-    async generateAppointments(employeeId, startDateTime, endDateTime) {
-        let appointmentsToSave = [];
-        const firstAppointment = new appointment_1.Appointment();
-        firstAppointment.employeeId = employeeId;
-        firstAppointment.appointmentStartTime = startDateTime.toISOString();
-        appointmentsToSave.push(firstAppointment);
-        while (endDateTime > startDateTime) {
-            let newDateTime = addMinutes(startDateTime, 15);
-            const newAppointment = new appointment_1.Appointment();
-            newAppointment.employeeId = employeeId;
-            newAppointment.appointmentStartTime = newDateTime.toISOString();
-            appointmentsToSave.push(newAppointment);
-            startDateTime = newDateTime;
-        }
-        return await (0, array_helper_1.default)(this.mapper.batchPut(appointmentsToSave));
-    }
     async getAppointmentsForUser(date, userId, upcoming, limit = 1) {
         let equalsExpressionPredicate;
         if (upcoming) {
