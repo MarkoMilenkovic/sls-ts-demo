@@ -1,5 +1,5 @@
 service: appointment-operations
-frameworkVersion: '3'
+frameworkVersion: "3"
 provider:
   name: aws
   runtime: nodejs12.x
@@ -27,7 +27,7 @@ custom:
   dynamodb:
     stages:
       - ${file(config.json):STAGE}
-    start: 
+    start:
       port: 8000
       migrate: true # create the tables
       # inMemory: true
@@ -100,23 +100,42 @@ functions:
       - http:
           path: employee/{employeeId}/date/{date}
           method: get
+
+  addCategory:
+    handler: src/functions/categories/addCategory.handler
+    events:
+      - http:
+          path: category
+          method: post
+  getCategories:
+    handler: src/functions/categories/getCategories.handler
+    events:
+      - http:
+          path: category
+          method: get
+  getShopsForCategory:
+    handler: src/functions/shops/getShopsForCategory.handler
+    events:
+      - http:
+          path: category/{category}/shops
+          method: get
 resources:
   Resources:
     AppointmentTable:
       Type: "AWS::DynamoDB::Table"
       Properties:
         AttributeDefinitions:
-        - AttributeName: "employeeId"
-          AttributeType: "S"
-        - AttributeName: "appointmentStartTime"
-          AttributeType: "S"
-        - AttributeName: "userId"
-          AttributeType: "S"
+          - AttributeName: "employeeId"
+            AttributeType: "S"
+          - AttributeName: "appointmentStartTime"
+            AttributeType: "S"
+          - AttributeName: "userId"
+            AttributeType: "S"
         KeySchema:
-        - AttributeName: "employeeId"
-          KeyType: "HASH"
-        - AttributeName: appointmentStartTime
-          KeyType: "RANGE"  
+          - AttributeName: "employeeId"
+            KeyType: "HASH"
+          - AttributeName: appointmentStartTime
+            KeyType: "RANGE"
         GlobalSecondaryIndexes:
           - IndexName: "userId-index"
             KeySchema:
@@ -135,21 +154,21 @@ resources:
       Type: "AWS::DynamoDB::Table"
       Properties:
         AttributeDefinitions:
-        - AttributeName: "hashKey"
-          AttributeType: "N"
-        - AttributeName: "rangeKey"
-          AttributeType: "S"
-        - AttributeName: "geohash"
-          AttributeType: "N"
+          - AttributeName: "hashKey"
+            AttributeType: "N"
+          - AttributeName: "id"
+            AttributeType: "S"
+          - AttributeName: "geohash"
+            AttributeType: "N"
         KeySchema:
-        - AttributeName: "hashKey"
-          KeyType: "HASH"
-        - AttributeName: "rangeKey"
-          KeyType: "RANGE"  
+          - AttributeName: "hashKey"
+            KeyType: "HASH"
+          - AttributeName: "id"
+            KeyType: "RANGE"
         GlobalSecondaryIndexes:
           - IndexName: "rangeKey-index"
             KeySchema:
-              - AttributeName: "rangeKey"
+              - AttributeName: "id"
                 KeyType: "HASH"
             Projection:
               ProjectionType: "ALL"
@@ -157,13 +176,13 @@ resources:
               ReadCapacityUnits: 1
               WriteCapacityUnits: 1
         LocalSecondaryIndexes:
-        - IndexName: "geohash-index"
-          KeySchema:
-          - AttributeName: "hashKey"
-            KeyType: "HASH"
-          - AttributeName: "geohash"
-            KeyType: "RANGE"  
-          Projection:
+          - IndexName: "geohash-index"
+            KeySchema:
+              - AttributeName: "hashKey"
+                KeyType: "HASH"
+              - AttributeName: "geohash"
+                KeyType: "RANGE"
+            Projection:
               ProjectionType: "ALL"
         ProvisionedThroughput:
           ReadCapacityUnits: 1
@@ -173,11 +192,11 @@ resources:
       Type: "AWS::DynamoDB::Table"
       Properties:
         AttributeDefinitions:
-        - AttributeName: "serviceId"
-          AttributeType: "S"
+          - AttributeName: "serviceId"
+            AttributeType: "S"
         KeySchema:
-        - AttributeName: "serviceId"
-          KeyType: "HASH"
+          - AttributeName: "serviceId"
+            KeyType: "HASH"
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
@@ -186,15 +205,15 @@ resources:
       Type: "AWS::DynamoDB::Table"
       Properties:
         AttributeDefinitions:
-        - AttributeName: "serviceId"
-          AttributeType: "S"
-        - AttributeName: "shopId"
-          AttributeType: "S"
+          - AttributeName: "serviceId"
+            AttributeType: "S"
+          - AttributeName: "shopId"
+            AttributeType: "S"
         KeySchema:
-        - AttributeName: "serviceId"
-          KeyType: "HASH"
-        - AttributeName: "shopId"
-          KeyType: "RANGE"  
+          - AttributeName: "serviceId"
+            KeyType: "HASH"
+          - AttributeName: "shopId"
+            KeyType: "RANGE"
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
@@ -213,16 +232,29 @@ resources:
       Type: "AWS::DynamoDB::Table"
       Properties:
         AttributeDefinitions:
-        - AttributeName: "employeeId"
-          AttributeType: "S"
-        - AttributeName: "startDate"
-          AttributeType: "S"
+          - AttributeName: "employeeId"
+            AttributeType: "S"
+          - AttributeName: "startDate"
+            AttributeType: "S"
         KeySchema:
-        - AttributeName: "employeeId"
-          KeyType: "HASH"
-        - AttributeName: "startDate"
-          KeyType: "RANGE"  
+          - AttributeName: "employeeId"
+            KeyType: "HASH"
+          - AttributeName: "startDate"
+            KeyType: "RANGE"
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
         TableName: ${file(config.json):PRIMO_EMPLOYEE_WORK_HOURS_TABLE}
+    PrimoCategoriesTable:
+      Type: "AWS::DynamoDB::Table"
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: "name"
+            AttributeType: "S"
+        KeySchema:
+          - AttributeName: "name"
+            KeyType: "HASH"
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: ${file(config.json):PRIMO_CATEGORIES_TABLE}

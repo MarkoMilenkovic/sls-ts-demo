@@ -12,34 +12,26 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Shop = void 0;
+exports.Category = void 0;
 const dynamodb_data_mapper_annotations_1 = require("@aws/dynamodb-data-mapper-annotations");
 const config_json_1 = __importDefault(require("../../config.json"));
-const tableName = config_json_1.default.PRIMO_SHOP_TABLE;
-let Shop = class Shop {
+const tableName = config_json_1.default.PRIMO_CATEGORIES_TABLE;
+let Category = class Category {
 };
 __decorate([
     (0, dynamodb_data_mapper_annotations_1.hashKey)(),
     __metadata("design:type", String)
-], Shop.prototype, "hashKey", void 0);
-__decorate([
-    (0, dynamodb_data_mapper_annotations_1.rangeKey)(),
-    __metadata("design:type", String)
-], Shop.prototype, "id", void 0);
+], Category.prototype, "name", void 0);
 __decorate([
     (0, dynamodb_data_mapper_annotations_1.attribute)(),
     __metadata("design:type", String)
-], Shop.prototype, "name", void 0);
+], Category.prototype, "description", void 0);
 __decorate([
     (0, dynamodb_data_mapper_annotations_1.attribute)(),
     __metadata("design:type", String)
-], Shop.prototype, "geoJson", void 0);
-__decorate([
-    (0, dynamodb_data_mapper_annotations_1.attribute)({ memberType: 'String' }),
-    __metadata("design:type", Set)
-], Shop.prototype, "categories", void 0);
-Shop = __decorate([
+], Category.prototype, "pictureUrl", void 0);
+Category = __decorate([
     (0, dynamodb_data_mapper_annotations_1.table)(tableName)
-], Shop);
-exports.Shop = Shop;
-//# sourceMappingURL=shop.js.map
+], Category);
+exports.Category = Category;
+//# sourceMappingURL=category.js.map

@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "d7556a21-1ab6-456e-aa38-33db58b21ba5",
+		"_postman_id": "ec566964-9643-4d39-8bda-58077022284c",
 		"name": "Serverless Primo Practice",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -337,6 +337,58 @@
 								"1",
 								"date",
 								"2022-07-18"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "categories",
+			"item": [
+				{
+					"name": "saveCategories",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "[\n    {\n        \"name\": \"Cars\",\n        \"description\": \"Description about cars category\"\n    }\n]",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{protocol}}://{{apiUrl}}/{{stage}}/category",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"{{stage}}",
+								"category"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getCategories",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{protocol}}://{{apiUrl}}/{{stage}}/category",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"{{stage}}",
+								"category"
 							]
 						}
 					},

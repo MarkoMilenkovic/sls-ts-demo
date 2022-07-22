@@ -5,15 +5,16 @@ import { GeoDataManager, GeoDataManagerConfiguration } from 'dynamodb-geo';
 import config from "../../config.json";
 import PrimoServices from "./primo-services";
 import EmployeeWorkHoursService from "./employee-work-hours-service";
+import CategoryService from "./category-service";
 
-// const appointmentService = new AppointmentService(mapper);
 const geoDataConfig = new GeoDataManagerConfiguration(client, config.PRIMO_SHOP_TABLE);
 geoDataConfig.hashKeyLength = 5;
+geoDataConfig.rangeKeyAttributeName = "id";
 
 const myGeoTableManager = new GeoDataManager(geoDataConfig);
-// const shopService = new ShopService(myGeoTableManager);
 
 export const primoServices = new PrimoServices(mapper);
+export const categoryService = new CategoryService(mapper);
 export const employeeWorkHoursService = new EmployeeWorkHoursService(mapper);
 export const appointmentService = new AppointmentService(mapper, primoServices, employeeWorkHoursService, client);
-export const shopService = new ShopService(myGeoTableManager);
+export const shopService = new ShopService(mapper, myGeoTableManager, categoryService);

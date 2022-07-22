@@ -12,10 +12,12 @@ export class Shop {
     @hashKey()
     hashKey?: string;
     @rangeKey()
-    rangeKey?: string;
+    id?: string;
     @attribute()
     name?: string;
     @attribute()
     geoJson?: string;
+    @attribute({memberType: 'String'})
+    categories?: Set<String>;
     distance?: number;
 }

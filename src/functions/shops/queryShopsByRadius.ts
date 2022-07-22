@@ -6,12 +6,14 @@ export const handler = async (event: APIGatewayEvent): Promise<APIGatewayProxyRe
     const latitude: number = parseFloat(event.queryStringParameters?.latitude as string);
     const longitude: number = parseFloat(event.queryStringParameters?.longitude as string);
     const radius: number = parseFloat(event.queryStringParameters?.radius as string);
+    const category = event.queryStringParameters?.category as string;
+    
     if (!latitude || !longitude || !radius) {
         return formatJSONResponse(400, { message: "latitude, longitude and radius are required!" });
     }
 
     try {
-        const shops = await shopService.getShopsNearLocation(latitude, longitude, radius);
+        const shops = await shopService.getShopsNearLocation(latitude, longitude, radius, category);
         return formatJSONResponse(200, shops);
     } catch (error) {
         console.log(error);
