@@ -23,13 +23,16 @@ class AppointmentService {
     //todo: check if employeeId is valid -> userId will be comming from JWT so validation is not implemented
     async scheduleAppointment(employeeId, appointmentStartTime, userId, serviceId) {
         //todo: get shopId from dynamo
-        const shopId = "1a377f59-0b29-40be-909b-d8218239ad76";
+        const shopId = "94356396-3aa3-4574-8cbb-5a76a9fd4095";
         const servicePerShop = await this.primoServices.getServiceForShop(shopId, serviceId);
         const duration = servicePerShop.durationInMinutes;
         const appointmentEndTime = addMinutes(new Date(appointmentStartTime), duration).toISOString();
         const isTimeValid = await this.employeeWorkHoursService.validateWorkHours(employeeId, appointmentStartTime, appointmentEndTime);
         if (!isTimeValid) {
-            throw { code: 'OutsideWorkHours' };
+            throw {
+                code: "ClientError",
+                message: "Outside Work Hours for employee!"
+            };
         }
         const appointmentsToDelete = await this.getAppoitmentsToDelete(employeeId, appointmentStartTime, duration);
         const myList = [];
@@ -73,8 +76,8 @@ class AppointmentService {
     async getAppoitmentsToDelete(employeeId, startDateTime, duration) {
         let lowerBound = addMinutes(new Date(startDateTime), 1).toISOString();
         let upperBound = addMinutes(new Date(startDateTime), (duration - 1)).toISOString();
-        let equalsExpressionPredicate = (0, dynamodb_expressions_1.between)(new dynamodb_expressions_1.AttributeValue({ S: lowerBound }), new dynamodb_expressions_1.AttributeValue({ S: upperBound }));
-        const equalsExpression = Object.assign(Object.assign({}, equalsExpressionPredicate), { subject: 'appointmentStartTime' });
+        let betweenExpressionPredicate = (0, dynamodb_expressions_1.between)(new dynamodb_expressions_1.AttributeValue({ S: lowerBound }), new dynamodb_expressions_1.AttributeValue({ S: upperBound }));
+        const equalsExpression = Object.assign(Object.assign({}, betweenExpressionPredicate), { subject: 'appointmentStartTime' });
         let employeeIdExpressionPredicate = (0, dynamodb_expressions_1.equals)(employeeId);
         const employeeIdExpression = Object.assign(Object.assign({}, employeeIdExpressionPredicate), { subject: 'employeeId' });
         const andExpression = {
@@ -84,7 +87,26 @@ class AppointmentService {
                 employeeIdExpression
             ]
         };
-        return await (0, array_helper_1.default)(this.mapper.query(appointment_1.Appointment, andExpression));
+        const appointments = await (0, array_helper_1.default)(this.mapper.query(appointment_1.Appointment, andExpression));
+        let endTimeGreaterThenStartExpressionPredicate = (0, dynamodb_expressions_1.greaterThan)(startDateTime);
+        const endTimeGreaterThenStartExpression = Object.assign(Object.assign({}, endTimeGreaterThenStartExpressionPredicate), { subject: 'appointmentEndTime' });
+        let startTimeGreaterThenStartExpressionPredicate = (0, dynamodb_expressions_1.lessThan)(startDateTime);
+        const startTimeGreaterThenStartExpression = Object.assign(Object.assign({}, startTimeGreaterThenStartExpressionPredicate), { subject: 'appointmentStartTime' });
+        const expression = {
+            type: 'And',
+            conditions: [
+                endTimeGreaterThenStartExpression
+            ]
+        };
+        const options = {
+            filter: expression,
+        };
+        const moreAppointments = await (0, array_helper_1.default)(this.mapper.query(appointment_1.Appointment, {
+            employeeId,
+            appointmentStartTime: startTimeGreaterThenStartExpression
+        }, options));
+        const merged = appointments.concat(moreAppointments);
+        return merged;
     }
     async getAppointmentsForUser(date, userId, upcoming, limit = 1) {
         let equalsExpressionPredicate;

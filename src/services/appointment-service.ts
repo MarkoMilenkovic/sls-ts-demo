@@ -2,7 +2,8 @@ import { DataMapper } from "@aws/dynamodb-data-mapper";
 import gen2array from "../libs/array-helper";
 import { Appointment } from "../models/appointment";
 import {
-    equals, between, beginsWith, AttributePath, AttributeValue, FunctionExpression, ConditionExpression, lessThanOrEqualTo, greaterThanOrEqualTo
+    equals, between, beginsWith, AttributePath, AttributeValue, FunctionExpression,
+    ConditionExpression, lessThanOrEqualTo, greaterThanOrEqualTo, greaterThan, lessThan
 } from '@aws/dynamodb-expressions';
 import { QueryOptions } from "@aws/dynamodb-data-mapper";
 import PrimoServices from "./primo-services";
@@ -30,7 +31,7 @@ class AppointmentService {
     async scheduleAppointment(employeeId: string, appointmentStartTime: string, userId: string, serviceId: string): Promise<Appointment> {
 
         //todo: get shopId from dynamo
-        const shopId = "1a377f59-0b29-40be-909b-d8218239ad76";
+        const shopId = "94356396-3aa3-4574-8cbb-5a76a9fd4095";
         const servicePerShop = await this.primoServices.getServiceForShop(shopId, serviceId);
         const duration: number = servicePerShop.durationInMinutes!;
 
@@ -38,11 +39,13 @@ class AppointmentService {
         const isTimeValid = await this.employeeWorkHoursService.validateWorkHours(employeeId, appointmentStartTime, appointmentEndTime);
 
         if (!isTimeValid) {
-            throw { code: 'OutsideWorkHours' };
+            throw {
+                code: "ClientError",
+                message: "Outside Work Hours for employee!"
+            }
         }
 
         const appointmentsToDelete = await this.getAppoitmentsToDelete(employeeId, appointmentStartTime, duration);
-
         const myList: DynamoDB.Types.TransactWriteItemList = [];
         myList.push({
             Put: {
@@ -52,7 +55,7 @@ class AppointmentService {
                     appointmentStartTime: { S: appointmentStartTime },
                     userId: { S: userId },
                     serviceId: { S: serviceId },
-                    appointmentEndTime: {S: appointmentEndTime}
+                    appointmentEndTime: { S: appointmentEndTime }
                 },
                 ConditionExpression: 'attribute_not_exists(userId) AND ' +
                     'attribute_not_exists(employeeId) AND ' +
@@ -89,10 +92,10 @@ class AppointmentService {
         let lowerBound = addMinutes(new Date(startDateTime), 1).toISOString();
         let upperBound = addMinutes(new Date(startDateTime), (duration - 1)).toISOString();
 
-        let equalsExpressionPredicate =
+        let betweenExpressionPredicate =
             between(new AttributeValue({ S: lowerBound }), new AttributeValue({ S: upperBound }));
         const equalsExpression: ConditionExpression = {
-            ...equalsExpressionPredicate,
+            ...betweenExpressionPredicate,
             subject: 'appointmentStartTime'
         };
 
@@ -110,7 +113,39 @@ class AppointmentService {
             ]
         };
 
-        return await gen2array(this.mapper.query(Appointment, andExpression));
+        const appointments = await gen2array(this.mapper.query(Appointment, andExpression));
+
+        let endTimeGreaterThenStartExpressionPredicate =
+            greaterThan(startDateTime);
+        const endTimeGreaterThenStartExpression: ConditionExpression = {
+            ...endTimeGreaterThenStartExpressionPredicate,
+            subject: 'appointmentEndTime'
+        };
+        let startTimeGreaterThenStartExpressionPredicate =
+            lessThan(startDateTime);
+        const startTimeGreaterThenStartExpression: ConditionExpression = {
+            ...startTimeGreaterThenStartExpressionPredicate,
+            subject: 'appointmentStartTime'
+        };
+        const expression: ConditionExpression = {
+            type: 'And',
+            conditions: [
+                endTimeGreaterThenStartExpression
+            ]
+        };
+
+        const options: QueryOptions = {
+            filter: expression,
+        }
+        const moreAppointments = await gen2array(this.mapper.query(Appointment,
+            {
+                employeeId,
+                appointmentStartTime: startTimeGreaterThenStartExpression
+            },
+            options));
+
+        const merged = appointments.concat(moreAppointments);
+        return merged;
     }
 
     async getAppointmentsForUser(date: string, userId: string, upcoming: Boolean, limit: number = 1): Promise<Appointment[]> {

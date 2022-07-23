@@ -13,8 +13,8 @@ const handler = async (event) => {
         return (0, api_gateway_1.formatJSONResponse)(200, employeeWorkHours);
     }
     catch (error) {
-        if (error.code === 'InvalidParameters') {
-            return (0, api_gateway_1.formatJSONResponse)(400, { "message": "Invalid input parameters!" });
+        if (error.code === 'ClientError') {
+            return (0, api_gateway_1.formatJSONResponse)(400, { "message": error.message });
         }
         console.log(error);
         return (0, api_gateway_1.formatJSONResponse)(500, { "message": "Something went wrong!" });

@@ -79,7 +79,10 @@ class EmployeeWorkHoursService {
 
 function validateParameters(startDate: string, endDate: string, dailyHours: string) {
     if (!startDate || !endDate || !dailyHours) {
-        throw { code: 'InvalidParameters' };
+        throw {
+            code: "ClientError",
+            message: "Invalid input parameters!"
+        }
     }
     const dailyHoursArray = dailyHours.split('-');
     const dailyStartHours = dailyHoursArray![0];
@@ -87,7 +90,10 @@ function validateParameters(startDate: string, endDate: string, dailyHours: stri
     const startDateTime = new Date(startDate + 'T' + dailyStartHours);
     const endDateTime = new Date(endDate + 'T' + dailyEndHours);
     if (!isDate(startDateTime) || !isDate(endDateTime)) {
-        throw { code: 'InvalidParameters' };
+        throw {
+            code: "ClientError",
+            message: "Invalid input parameters!"
+        }
     }
 }
 

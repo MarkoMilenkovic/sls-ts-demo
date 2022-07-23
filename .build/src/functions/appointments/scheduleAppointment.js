@@ -6,29 +6,13 @@ const services_1 = require("../../services");
 const handler = async (event) => {
     const body = JSON.parse(event.body);
     const { employeeId, appointmentStartTime, userId, serviceId } = body;
-    let statusCode;
-    let response;
     try {
         const appointment = await services_1.appointmentService.scheduleAppointment(employeeId, appointmentStartTime, userId, serviceId);
-        response = appointment;
-        statusCode = 200;
+        return (0, api_gateway_1.formatJSONResponse)(200, appointment);
     }
     catch (error) {
-        if (error.code === 'ConditionalCheckFailedException' || error.code === 'TransactionCanceledException') {
-            response = { "message": "Appointment not available!" };
-            statusCode = 400;
-        }
-        else if (error.code === 'OutsideWorkHours') {
-            response = { "message": "Outside Work Hours for employee!" };
-            statusCode = 400;
-        }
-        else {
-            console.log(error);
-            response = { "message": "Something went wrong!" };
-            statusCode = 500;
-        }
+        return (0, api_gateway_1.handleScheduleAppointmentError)(error);
     }
-    return (0, api_gateway_1.formatJSONResponse)(statusCode, response);
 };
 exports.handler = handler;
 //# sourceMappingURL=scheduleAppointment.js.map
