@@ -28,8 +28,8 @@ __decorate([
 ], Category.prototype, "description", void 0);
 __decorate([
     (0, dynamodb_data_mapper_annotations_1.attribute)(),
-    __metadata("design:type", String)
-], Category.prototype, "pictureUrl", void 0);
+    __metadata("design:type", Boolean)
+], Category.prototype, "hasImage", void 0);
 Category = __decorate([
     (0, dynamodb_data_mapper_annotations_1.table)(tableName)
 ], Category);

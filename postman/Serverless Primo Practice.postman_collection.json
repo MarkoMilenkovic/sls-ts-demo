@@ -188,7 +188,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{protocol}}://{{apiUrl}}/{{stage}}/shop/1a377f59-0b29-40be-909b-d8218239ad76/services",
+							"raw": "{{protocol}}://{{apiUrl}}/{{stage}}/shop/9faf64bd-4e8a-4a87-ae1d-0702d97f44db/services",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{apiUrl}}"
@@ -196,7 +196,7 @@
 							"path": [
 								"{{stage}}",
 								"shop",
-								"1a377f59-0b29-40be-909b-d8218239ad76",
+								"9faf64bd-4e8a-4a87-ae1d-0702d97f44db",
 								"services"
 							]
 						}
@@ -210,7 +210,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "[\n    {\n        \"serviceId\"  : \"e1fea39c-b0bf-490c-aa98-51425f059491\",\n        \"durationInMinutes\": 45,\n        \"price\": \"1800 RSD\"\n    }\n]",
+							"raw": "[\n    {\n        \"serviceId\"  : \"346acec2-63fd-4c51-803c-2b1f57eed010\",\n        \"durationInMinutes\": 45,\n        \"price\": \"1800 RSD\"\n    }\n]",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -218,7 +218,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{apiUrl}}/{{stage}}/shop/1a377f59-0b29-40be-909b-d8218239ad76/services",
+							"raw": "{{protocol}}://{{apiUrl}}/{{stage}}/shop/2790ba67-6e8d-4374-92c1-1bae3144d4f6/services",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{apiUrl}}"
@@ -226,8 +226,29 @@
 							"path": [
 								"{{stage}}",
 								"shop",
-								"1a377f59-0b29-40be-909b-d8218239ad76",
+								"2790ba67-6e8d-4374-92c1-1bae3144d4f6",
 								"services"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getShopsByCategory",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{protocol}}://{{apiUrl}}/{{stage}}/category/Barber/shops",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"{{stage}}",
+								"category",
+								"Barber",
+								"shops"
 							]
 						}
 					},
@@ -389,6 +410,35 @@
 							"path": [
 								"{{stage}}",
 								"category"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getPresignedUrlForCategory",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "file",
+							"file": {
+								"src": "/home/universe.dart.spb/mmilenkovic/Desktop/beograd.jpg"
+							}
+						},
+						"url": {
+							"raw": "{{protocol}}://{{apiUrl}}/{{stage}}/category/Barber",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"{{stage}}",
+								"category",
+								"Barber"
 							]
 						}
 					},

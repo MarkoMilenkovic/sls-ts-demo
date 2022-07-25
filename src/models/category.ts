@@ -13,6 +13,8 @@ export class Category {
     @attribute()
     description?: string;
     @attribute()
-    pictureUrl?: string;
+    hasImage?: boolean;
+
+    photoUrl?: string;
 
 }

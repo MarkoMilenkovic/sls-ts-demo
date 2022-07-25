@@ -18,11 +18,20 @@ provider:
         - "dynamodb:BatchWriteItem"
       Resource:
         - "arn:aws:dynamodb:${self:provider.region}:*:table/${file(config.json):PRIMO_APPOINTMENT_TABLE}"
+    - Effect: "Allow"
+      Action: 
+        - "s3:GetObject"
+        - "s3:PutObject"
+        - "s3:PutBucketNotification"
+        - "s3:GetBucketNotification"
+      Resource:
+        - "arn:aws:s3:::${file(config.json):PHOTOS_S3_BUCKET}"
+        # - "arn:aws:s3:::*"
 plugins:
   - serverless-offline
   - serverless-dynamodb-local
   - serverless-plugin-typescript
-#Local DynamoDb configuration
+  - serverless-s3-local
 custom:
   dynamodb:
     stages:
@@ -32,6 +41,10 @@ custom:
       migrate: true # create the tables
       # inMemory: true
       onStart: true
+  s3:
+    bucketName: ${file(config.json):PHOTOS_S3_BUCKET}
+    host: localhost
+    directory: /tmp
 
 functions:
   scheduleAppointment:
@@ -119,8 +132,24 @@ functions:
       - http:
           path: category/{category}/shops
           method: get
+  generatePresignedUrlForUpload:
+    handler: src/functions/categories/generatePresignedUrlForUpload.handler
+    events:
+      - http:
+          path: category/{category}
+          method: get
+  addImage:
+    handler: src/functions/categories/addImage.handler
+    events:
+      - s3: 
+          bucket: ${file(config.json):PHOTOS_S3_BUCKET}
+          event: s3:ObjectCreated:*
 resources:
   Resources:
+    PhotoBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${file(config.json):PHOTOS_S3_BUCKET}
     AppointmentTable:
       Type: "AWS::DynamoDB::Table"
       Properties:
