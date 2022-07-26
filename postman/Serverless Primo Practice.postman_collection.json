@@ -15,7 +15,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"employeeId\": \"lemi1\",\n    \"appointmentStartTime\": \"2022-07-191T08:15:00.000Z\",\n    \"userId\": \"1\"\n}",
+							"raw": "{\n    \"employeeId\": \"1\",\n    \"appointmentStartTime\": \"2022-07-25T17:15:00.000Z\",\n    \"serviceId\": \"346acec2-63fd-4c51-803c-2b1f57eed010\",\n    \"userId\": \"1\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -116,7 +116,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"latitude\": 40.09717, \n    \"longitude\": 23.78431,\n    \"name\": \"Milenko test\"\n}",
+							"raw": "{\n    \"latitude\": 40.09717, \n    \"longitude\": 23.78431,\n    \"name\": \"Milenko test\",\n    \"categories\": [\"Barber\"]\n}",
 							"options": {
 								"raw": {
 									"language": "json"

@@ -1,0 +1,608 @@
+swagger: "2.0"
+info:
+  description: "Primo Documentation"
+  version: "1.0.0"
+  title: "Primo Documentation"
+  termsOfService: "http://primo.com/terms/"
+  contact:
+    email: "marko12993@gmail.com"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+host: "localhost:3000"
+basePath: "/dev"
+tags:
+- name: "shops"
+  description: "Everything about Shops"
+- name: "services"
+  description: "Everything about services"
+- name: "employees"
+  description: "Everything about Employees"
+- name: "categories"
+  description: "Everything about Categories"
+- name: "appointments"
+  description: "Everything about Appointments"
+schemes:
+- "http"
+paths:
+  /category:
+    post:
+      tags:
+      - "categories"
+      summary: "Add new categories"
+      description: ""
+      operationId: "addNewCategories"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "An array of category object that needs to be added"
+        required: true
+        schema:
+          type: array
+          items:
+            $ref: "#/definitions/Category"
+      responses:
+        "400":
+          description: "Invalid input"
+    get:
+      tags:
+      - "categories"
+      summary: "Get all categoris in system"
+      description: ""
+      operationId: "getCategories"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+       "200":
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/CategoryWithPhotoUrl"
+  /category/{categoryName}:
+    get:
+      tags:
+      - "categories"
+      summary: "Get presigned url for uploading category image"
+      description: ""
+      operationId: "getPresignedUrlForUploadCategoryImage"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "categoryName"
+        in: "path"
+        description: "categoryName"
+        required: true
+        type: "string"
+      responses:
+       "200":
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/CategoryWithPhotoUrl"
+       "400":
+          description: "Unknown category provided!"
+          schema:
+            $ref: "#/definitions/ErrorWithMessage"
+  
+  /employee/{employeeId}/hours:
+    post:
+      tags:
+      - "employees"
+      summary: "Add work hours for an employee"
+      description: "Add work hours for an employee"
+      operationId: "addWorkHoursForEmployee"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "employeeId"
+        in: "path"
+        description: "ID of employee to add hours"
+        required: true
+        type: "integer"
+        format: "int64"
+      - in: "body"
+        name: "body"
+        description: "An array of category object that needs to be added"
+        required: true
+        schema:
+            $ref: "#/definitions/EmployeeDailyHours"
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/EmployeeDailyHours"
+        "400":
+          description: "Invalid input parameters"
+          schema:
+            $ref: "#/definitions/ErrorWithMessage"
+  /employee/{employeeId}/date/{date}:
+    get:
+      tags:
+      - "employees"
+      summary: "Get schedule works hours for an employee and date"
+      description: ""
+      operationId: "getScheduleForEmployeeAndDate"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "employeeId"
+        in: "path"
+        description: "ID of employee to get schedule"
+        required: true
+        type: "integer"
+        format: "int64"
+      - name: "date"
+        in: "path"
+        description: "Updated name of the pet"
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/EmployeeSchedule"
+        "400":
+          description: "Invalid input parameters"
+          schema:
+            $ref: "#/definitions/ErrorWithMessage"
+  /services:
+    post:
+      tags:
+      - "services"
+      summary: "Creates new services in system"
+      description: ""
+      operationId: "createServices"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "An array of service name object that needs to be created"
+        required: true
+        schema:
+            $ref: "#/definitions/ServiceNames"
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Service"
+        "400":
+          description: "Invalid input parameters"
+          schema:
+            $ref: "#/definitions/ErrorWithMessage"
+    get:
+      tags:
+      - "services"
+      summary: "Get all services in system"
+      description: ""
+      operationId: "getAllServices"
+      produces:
+      - "application/json"
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Service"
+        "400":
+          description: "Invalid input parameters"
+          schema:
+            $ref: "#/definitions/ErrorWithMessage"
+  /shops:
+    post:
+      tags:
+      - "shops"
+      summary: "Creates new shop"
+      description: "Returns created shops"
+      operationId: "createShop"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "A shop that needs to be created"
+        required: true
+        schema:
+            $ref: "#/definitions/CreateShop"
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Shop"
+        "400":
+          description: "Invalid input parameters or unknown category"
+          schema:
+            $ref: "#/definitions/ErrorWithMessage"
+    get:
+      tags:
+      - "shops"
+      summary: "Query shops by radius"
+      description: "Query shops by radius"
+      operationId: "queryShopsByRadius"
+      produces:
+      - "application/json"
+      parameters:
+      - in: query
+        name: latitude
+        type: integer
+        required: true
+        format: float
+        description: The lattitude of where to search from
+      - in: query
+        name: longitude
+        type: integer
+        required: true
+        format: float
+        description: The longitude of where to search
+      - in: query
+        name: radius
+        type: integer
+        required: true
+        format: float
+        description: The radius of search area
+      - in: query
+        name: categories
+        type: string
+        required: false
+        description: The categories of stores to serach
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/ShopWithDistance"
+        "400":
+          description: "Invalid input parameters or unknown category"
+          schema:
+            $ref: "#/definitions/ErrorWithMessage"
+  /shop/{shopId}/services:
+    get:
+      tags:
+      - "shops"
+      summary: "Get services for shop"
+      description: "Get services for shop"
+      operationId: "getServicesForShop"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "shopId"
+        in: "path"
+        description: "ID of shop to get services for"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/ServicePerShop"
+    post:
+      tags:
+      - "shops"
+      summary: "Add services for shop"
+      description: "Add services for shop"
+      operationId: "addServicesForShop"
+      produces:
+      - "application/json"
+      consumes:
+      - "application/json"
+      parameters:
+      - name: "shopId"
+        in: "path"
+        description: "ID of shop to get services for"
+        required: true
+        type: "integer"
+        format: "int64"
+      - name: "body"
+        in: "body"
+        description: "Services to be added to shop"
+        required: true
+        schema: 
+          $ref: "#/definitions/CreateServicePerShop"
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/ServicePerShop"
+  /category/{categoryName}/shops:
+    get:
+      tags:
+      - "categories"
+      summary: "Get shops by category"
+      description: "Get shops by categorys"
+      operationId: "getShopsByCategory"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "categoryName"
+        in: "path"
+        description: "Category to search shops by"
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "successful operation"
+          schema: 
+            type: array
+            items:
+              $ref: "#/definitions/Shop"
+        "400":
+          description: "Invalid parameters"
+  /appointment:
+    put:
+      tags:
+      - "appointments"
+      summary: "Schedule an appointment"
+      description: "Get shops by categorys"
+      operationId: "scheduleAppointment"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "body"
+        in: "body"
+        description: "Appointment details"
+        schema:
+          $ref: "#/definitions/ScheduleAppointment"
+
+      responses:
+        "200":
+          description: "successful operation"
+          schema: 
+            type: array
+            items:
+              $ref: "#/definitions/Appointment"
+        "400":
+          description: "Invalid parameters"
+  /appointment/upcomming:
+    get:
+      tags:
+      - "appointments"
+      summary: "Get upcoming appointments"
+      description: "Get upcoming appointments"
+      operationId: "getUpcomingAppointments"
+      produces:
+      - "application/json"
+      parameters:
+      - in: query
+        name: userId
+        type: string
+        required: true
+        description: The userId to get appointments for
+      - in: query
+        name: limit
+        type: integer
+        required: true
+        description: The max number of records in response
+      - in: query
+        name: date
+        type: string
+        required: true
+        format: date-time
+        description: The date-time from where to search upcoming appointmets
+      responses:
+        "200":
+          description: "successful operation"
+          schema: 
+            type: array
+            items:
+              $ref: "#/definitions/Appointment"
+        "400":
+          description: "Invalid parameters"
+  /appointment/previous:
+    get:
+      tags:
+      - "appointments"
+      summary: "Get previous appointments"
+      description: "Get previous appointments"
+      operationId: "getPreviousAppointments"
+      produces:
+      - "application/json"
+      parameters:
+      - in: query
+        name: userId
+        type: string
+        required: true
+        description: The userId to get appointments for
+      - in: query
+        name: limit
+        type: integer
+        required: true
+        description: The max number of records in response
+      - in: query
+        name: date
+        type: string
+        required: true
+        format: date-time
+        description: The date-time from where to search previous appointmets
+      responses:
+        "200":
+          description: "successful operation"
+          schema: 
+            type: array
+            items:
+              $ref: "#/definitions/Appointment"
+        "400":
+          description: "Invalid parameters"
+definitions:
+  Category:
+    type: "object"
+    properties:
+      name:
+        type: "string"
+      description:
+        type: "string"
+  CategoryWithPhotoUrl: 
+    type: "object"
+    properties:
+      name:
+        type: "string"
+      description:
+        type: "string"
+      photoUrl:
+        type: "string"
+  EmployeeDailyHours: 
+    type: "object"
+    properties:
+      employeeId:
+        type: "string"
+      startDate:
+        type: "string"
+        format: "date"
+      endDate:
+        type: "string"
+        format: "date"
+      dailyHours:
+        type: "string"
+  Appointment:
+    type: "object"
+    properties:
+        employeeId:
+          type: "string"
+        appointmentStartTime:
+          type: "string"
+          format: "date-time"
+        appointmentEndTime:
+          type: "string"
+          format: "date-time"
+        userId:
+          type: "string"
+        serviceId:
+          type: "string"
+  ScheduleAppointment:
+    type: "object"
+    properties:
+        employeeId:
+          type: "string"
+        appointmentStartTime:
+          type: "string"
+          format: "date-time"
+
+        userId:
+          type: "string"
+        serviceId:
+          type: "string"
+  EmployeeSchedule:
+    type: "object"
+    properties:
+      scheduledAppointmens:
+        type: "array"
+        items:
+          $ref: "#/definitions/EmployeeDailyHours"
+      employeeWorkHours:
+        type: "array"
+        items:
+          $ref: "#/definitions/Appointment"
+  ServiceNames:
+    type: "array"
+    items:
+      type: "string"
+  Service:
+    type: "object"
+    properties:
+      serviceId:
+        type: "string"
+      serviceName:
+        type: "string"
+  CreateShop:
+    type: "object"
+    properties:
+      latitude:
+        type: "number"
+        format: "float"
+        example: 40.09717
+      longitude:
+        type: "number"
+        format: "float"
+        example: 23.78431
+      name:
+        type: "string"
+      categories:
+        type: "array"
+        items:
+          type: "string"
+  Shop:
+    type: "object"
+    properties:
+      id:
+        type: "number"
+      name:
+        type: "string"
+      categories:
+        type: "array"
+        items:
+          type: "string"
+      geoJson:
+        $ref: "#/definitions/GeoJson"
+  ShopWithDistance:
+    type: "array"
+    items: 
+      properties:
+        id:
+          type: "number"
+        name:
+          type: "string"
+        categories:
+          type: "array"
+          items:
+            type: "string"
+        geoJson:
+          $ref: "#/definitions/GeoJson"
+        distance:
+          type: number
+  GeoJson:
+    type: "object"
+    properties:
+      type:
+        type: "string"
+      coordinates:
+        type: "array"
+        maxItems: 2
+        minItems: 2
+        items:
+          type: "number"
+          format: "float"
+          example: 23.78431
+  ServicePerShop:
+    type: "object"
+    properties:
+      serviceId:
+        type: "string"
+      shopId:
+        type: "string"
+      price:
+        type: "string"
+      durationInMinutes:
+        type: "number"
+  CreateServicePerShop:
+    type: "object"
+    properties:
+      serviceId:
+        type: "string"
+      price:
+        type: "string"
+      durationInMinutes:
+        type: "number"
+  ErrorWithMessage:
+    type: "object"
+    properties:
+      message:
+        type: "string"
+externalDocs:
+  description: "Find out more about Swagger"
+  url: "http://swagger.io"

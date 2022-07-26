@@ -31,7 +31,7 @@ class AppointmentService {
     async scheduleAppointment(employeeId: string, appointmentStartTime: string, userId: string, serviceId: string): Promise<Appointment> {
 
         //todo: get shopId from dynamo
-        const shopId = "94356396-3aa3-4574-8cbb-5a76a9fd4095";
+        const shopId = "86fdd760-b203-4706-a0f6-931dab09fdf4";
         const servicePerShop = await this.primoServices.getServiceForShop(shopId, serviceId);
         const duration: number = servicePerShop.durationInMinutes!;
 

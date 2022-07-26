@@ -23,7 +23,7 @@ class AppointmentService {
     //todo: check if employeeId is valid -> userId will be comming from JWT so validation is not implemented
     async scheduleAppointment(employeeId, appointmentStartTime, userId, serviceId) {
         //todo: get shopId from dynamo
-        const shopId = "94356396-3aa3-4574-8cbb-5a76a9fd4095";
+        const shopId = "86fdd760-b203-4706-a0f6-931dab09fdf4";
         const servicePerShop = await this.primoServices.getServiceForShop(shopId, serviceId);
         const duration = servicePerShop.durationInMinutes;
         const appointmentEndTime = addMinutes(new Date(appointmentStartTime), duration).toISOString();
