@@ -40,11 +40,17 @@ class ShopService {
     }
 
     async createShop(latitude: number, longitude: number, name: string, shopCategories: string[]): Promise<Shop> {
+        if (!latitude || !longitude || !name || !shopCategories || shopCategories.length === 0) {
+            throw {
+                code: "ClientError",
+                message: "Missing required parameters!"
+            }
+        }
         const categoriesFromDb = await this.categoryService.getCategoriesByNames(shopCategories);
         if (categoriesFromDb.length !== shopCategories.length) {
             throw {
-                code: 'ClientError',
-                message: 'Unknown category provided'
+                code: "ClientError",
+                message: "Unknown category provided"
             }
         }
         const id: string = uuidv4();

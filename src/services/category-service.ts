@@ -14,6 +14,12 @@ class CategoryService {
     ) { }
 
     async createCategories(categories: Category[]): Promise<Category[]> {
+        if (!categories || categories.length === 0) {
+            throw {
+                code: "ClientError",
+                message: "Missing required parameters!"
+            }
+        }
         const categoriesToSave = categories.map(category => {
             const c = new Category();
             c.name = category.name;

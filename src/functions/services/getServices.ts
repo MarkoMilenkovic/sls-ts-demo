@@ -1,5 +1,5 @@
 import { APIGatewayProxyResult, APIGatewayEvent } from 'aws-lambda';
-import { formatJSONResponse } from '../../libs/api-gateway';
+import { formatJSONResponse, handleError } from '../../libs/api-gateway';
 import { primoServices } from '../../services';
 
 export const handler = async (event: APIGatewayEvent): Promise<APIGatewayProxyResult> => {
@@ -7,8 +7,7 @@ export const handler = async (event: APIGatewayEvent): Promise<APIGatewayProxyRe
         const services = await primoServices.getServices();
         return formatJSONResponse(200, services);
     } catch (error) {
-        console.log(error);
-        return formatJSONResponse(500, { "message": "Something went wrong!" });
+        return handleError(error);
     }
 };
 

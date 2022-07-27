@@ -31,11 +31,17 @@ class ShopService {
         return mapToShops(responseDb, latitude, longitude);
     }
     async createShop(latitude, longitude, name, shopCategories) {
+        if (!latitude || !longitude || !name || !shopCategories || shopCategories.length === 0) {
+            throw {
+                code: "ClientError",
+                message: "Missing required parameters!"
+            };
+        }
         const categoriesFromDb = await this.categoryService.getCategoriesByNames(shopCategories);
         if (categoriesFromDb.length !== shopCategories.length) {
             throw {
-                code: 'ClientError',
-                message: 'Unknown category provided'
+                code: "ClientError",
+                message: "Unknown category provided"
             };
         }
         const id = (0, uuid_1.v4)();

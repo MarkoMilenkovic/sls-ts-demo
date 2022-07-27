@@ -10,6 +10,12 @@ class PrimoServices {
     ) { }
 
     async createServices(names: string[]): Promise<PrimoService[]> {
+        if (!names || names.length === 0) {
+            throw {
+                code: "ClientError",
+                message: "Missing required parameters!"
+            }
+        }
         const services: PrimoService[] = [];
         names.map(name => {
             const serviceToSave = new PrimoService();
@@ -24,6 +30,18 @@ class PrimoServices {
     }
 
     async addServicesToShop(shopId: string, services: ServicePerShop[]): Promise<ServicePerShop[]> {
+        if(!shopId || !services || !Array.isArray(services) || services.length === 0) {
+            throw {
+                code: "ClientError",
+                message: "Missing required parameters!"
+            }
+        }
+        if (services.filter(e => !e.durationInMinutes || !e.price).length > 0) {
+            throw {
+                code: "ClientError",
+                message: "Duration and price are mandatory"
+            }
+        }
         const servicesPerShop: ServicePerShop[] = [];
         services.map(service => {
             const servicePerShop = new ServicePerShop();

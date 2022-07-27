@@ -29,7 +29,12 @@ class AppointmentService {
 
     //todo: check if employeeId is valid -> userId will be comming from JWT so validation is not implemented
     async scheduleAppointment(employeeId: string, appointmentStartTime: string, userId: string, serviceId: string): Promise<Appointment> {
-
+        if(! employeeId || ! appointmentStartTime || !userId || !serviceId) {
+            throw {
+                code: "ClientError",
+                message: "Missing required parameters!"
+            }
+        }
         //todo: get shopId from dynamo
         const shopId = "86fdd760-b203-4706-a0f6-931dab09fdf4";
         const servicePerShop = await this.primoServices.getServiceForShop(shopId, serviceId);
@@ -149,6 +154,11 @@ class AppointmentService {
     }
 
     async getAppointmentsForUser(date: string, userId: string, upcoming: Boolean, limit: number = 1): Promise<Appointment[]> {
+        if (!date || !userId) {
+            throw {
+                code: "ClientError",
+                message: "Missing required parameters!"
+            }        }
         let equalsExpressionPredicate;
         if (upcoming) {
             equalsExpressionPredicate = greaterThanOrEqualTo(date);

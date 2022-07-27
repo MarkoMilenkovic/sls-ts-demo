@@ -6,9 +6,6 @@ const services_1 = require("../../services");
 const handler = async (event) => {
     const body = JSON.parse(event.body);
     const { employeeId, appointmentStartTime, userId, serviceId } = body;
-    if (!employeeId || !appointmentStartTime || !userId || !serviceId) {
-        return (0, api_gateway_1.formatJSONResponse)(400, { message: "Missing required parameters!" });
-    }
     try {
         const appointment = await services_1.appointmentService.scheduleAppointment(employeeId, appointmentStartTime, userId, serviceId);
         return (0, api_gateway_1.formatJSONResponse)(200, appointment);

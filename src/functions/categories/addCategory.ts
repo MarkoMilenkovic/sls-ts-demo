@@ -1,5 +1,5 @@
 import { APIGatewayEvent, APIGatewayProxyResult } from "aws-lambda";
-import { formatJSONResponse } from "../../libs/api-gateway";
+import { formatJSONResponse, handleError } from "../../libs/api-gateway";
 import { categoryService } from "../../services";
 
 export const handler = async (event: APIGatewayEvent): Promise<APIGatewayProxyResult> => {
@@ -10,7 +10,6 @@ export const handler = async (event: APIGatewayEvent): Promise<APIGatewayProxyRe
         return formatJSONResponse(200, createdCategories);
 
     } catch (error) {
-        console.log(error);
-        return formatJSONResponse(500, { "message": "Something went wrong!" });
+        return handleError(error);
     }
 };

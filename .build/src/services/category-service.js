@@ -15,6 +15,12 @@ class CategoryService {
         this.s3Client = s3Client;
     }
     async createCategories(categories) {
+        if (!categories || categories.length === 0) {
+            throw {
+                code: "ClientError",
+                message: "Missing required parameters!"
+            };
+        }
         const categoriesToSave = categories.map(category => {
             const c = new category_1.Category();
             c.name = category.name;

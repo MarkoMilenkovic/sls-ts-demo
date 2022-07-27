@@ -14,8 +14,7 @@ const handler = async (event) => {
         return (0, api_gateway_1.formatJSONResponse)(200, { employeeWorkHours, scheduledAppointments });
     }
     catch (error) {
-        console.log(error);
-        return (0, api_gateway_1.formatJSONResponse)(500, { "message": "Something went wrong!" });
+        return (0, api_gateway_1.handleError)(error);
     }
 };
 exports.handler = handler;

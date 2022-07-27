@@ -6,9 +6,6 @@ const services_1 = require("../../services");
 const handler = async (event) => {
     const body = JSON.parse(event.body);
     const { latitude, longitude, name, categories } = body;
-    if (!latitude || !longitude || !name || !categories || categories.length === 0) {
-        return (0, api_gateway_1.formatJSONResponse)(400, { "message": "Missing required parameters!" });
-    }
     try {
         const shop = await services_1.shopService.createShop(latitude, longitude, name, categories);
         return (0, api_gateway_1.formatJSONResponse)(200, shop);

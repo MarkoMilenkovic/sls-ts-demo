@@ -11,6 +11,12 @@ class PrimoServices {
         this.mapper = mapper;
     }
     async createServices(names) {
+        if (!names || names.length === 0) {
+            throw {
+                code: "ClientError",
+                message: "Missing required parameters!"
+            };
+        }
         const services = [];
         names.map(name => {
             const serviceToSave = new primoService_1.PrimoService();
@@ -23,6 +29,18 @@ class PrimoServices {
         return await (0, array_helper_1.default)(this.mapper.scan(primoService_1.PrimoService));
     }
     async addServicesToShop(shopId, services) {
+        if (!shopId || !services || !Array.isArray(services) || services.length === 0) {
+            throw {
+                code: "ClientError",
+                message: "Missing required parameters!"
+            };
+        }
+        if (services.filter(e => !e.durationInMinutes || !e.price).length > 0) {
+            throw {
+                code: "ClientError",
+                message: "Duration and price are mandatory"
+            };
+        }
         const servicesPerShop = [];
         services.map(service => {
             const servicePerShop = new servicePerShop_1.ServicePerShop();
