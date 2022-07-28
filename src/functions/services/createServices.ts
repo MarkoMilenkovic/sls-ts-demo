@@ -3,7 +3,7 @@ import { formatJSONResponse, handleError } from '../../libs/api-gateway';
 import { primoServices } from '../../services';
 
 export const handler = async (event: APIGatewayEvent): Promise<APIGatewayProxyResult> => {
-    const names:any = event.body;
+    const names = JSON.parse(event.body!);
 
     try {
         const services = await primoServices.createServices(names);

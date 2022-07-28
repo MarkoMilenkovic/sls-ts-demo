@@ -387,7 +387,8 @@ paths:
       - in: query
         name: limit
         type: integer
-        required: true
+        required: false
+        default: 10
         description: The max number of records in response
       - in: query
         name: date
@@ -422,7 +423,8 @@ paths:
       - in: query
         name: limit
         type: integer
-        required: true
+        default: 10
+        required: false
         description: The max number of records in response
       - in: query
         name: date
@@ -437,6 +439,65 @@ paths:
             type: array
             items:
               $ref: "#/definitions/Appointment"
+        "400":
+          description: "Invalid parameters"
+  /appointment/cancel:
+    put:
+      tags:
+      - "appointments"
+      summary: "Cancel appointments"
+      description: "Cancel appointments"
+      operationId: "cancelAppointment"
+      produces:
+      - "application/json"
+      parameters:
+      - name: body
+        in: body
+        description: "Appointment details"
+        schema:
+          $ref: "#/definitions/CancelAppointment"
+
+      responses:
+        "200":
+          description: "successful operation"
+          schema: 
+              $ref: "#/definitions/CancelledAppointment"
+        "400":
+          description: "Invalid parameters"
+    get:
+      tags:
+      - "appointments"
+      summary: "Get cancelled appointments for user"
+      description: "Get cancelled appointments for user"
+      operationId: "getCancelAppointment"
+      produces:
+      - "application/json"
+      parameters:
+      - in: query
+        name: userId
+        type: string
+        required: true
+        description: The userId to get cancelled appointments for
+      - in: query
+        name: limit
+        type: integer
+        required: false
+        default: 10
+        description: The max number of records in response
+      - in: query
+        name: date
+        type: string
+        format: date-time
+        default: "current date time"
+        required: false
+        description: Date to search from (appointmentStart greater that this date)
+      responses:
+        "200":
+          description: "successful operation"
+          schema: 
+            type: array
+            items:
+              $ref: "#/definitions/CancelledAppointment"
         "400":
           description: "Invalid parameters"
 definitions:
@@ -497,6 +558,37 @@ definitions:
           type: "string"
         serviceId:
           type: "string"
+  CancelAppointment:
+    type: "object"
+    properties:
+        initiator:
+          type: "string"
+        appointmentStartTime:
+          type: "string"
+          format: "date-time"
+        employeeId:
+          type: "string"
+  CancelledAppointment:
+    type: "object"
+    properties:
+        id:
+          type: "string"
+        initiator:
+          type: "string"
+        appointmentStartTime:
+          type: "string"
+          format: "date-time"
+        employeeId:
+          type: "string"
+        userId:
+          type: "string"
+        shopId:
+          type: "string"
+        cancelledBy:
+          type: "string"
+        cancelledOn:
+          type: "string"
+          format: "date-time"
   EmployeeSchedule:
     type: "object"
     properties:

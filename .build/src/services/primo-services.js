@@ -29,7 +29,7 @@ class PrimoServices {
         return await (0, array_helper_1.default)(this.mapper.scan(primoService_1.PrimoService));
     }
     async addServicesToShop(shopId, services) {
-        if (!shopId || !services || !Array.isArray(services) || services.length === 0) {
+        if (!shopId || !services || services.length === 0) {
             throw {
                 code: "ClientError",
                 message: "Missing required parameters!"

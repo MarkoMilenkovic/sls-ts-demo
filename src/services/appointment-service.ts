@@ -1,4 +1,4 @@
-import { DataMapper } from "@aws/dynamodb-data-mapper";
+import { DataMapper, ItemNotFoundException } from "@aws/dynamodb-data-mapper";
 import gen2array from "../libs/array-helper";
 import { Appointment } from "../models/appointment";
 import {
@@ -10,6 +10,7 @@ import PrimoServices from "./primo-services";
 import { DynamoDB } from "aws-sdk";
 import config from "../../config.json";
 import EmployeeWorkHoursService from "./employee-work-hours-service";
+import { CancelledAppointment } from "../models/cancelledAppointment";
 
 const appointmentTableName = config.PRIMO_APPOINTMENT_TABLE;
 
@@ -29,14 +30,14 @@ class AppointmentService {
 
     //todo: check if employeeId is valid -> userId will be comming from JWT so validation is not implemented
     async scheduleAppointment(employeeId: string, appointmentStartTime: string, userId: string, serviceId: string): Promise<Appointment> {
-        if(! employeeId || ! appointmentStartTime || !userId || !serviceId) {
+        if (!employeeId || !appointmentStartTime || !userId || !serviceId) {
             throw {
                 code: "ClientError",
                 message: "Missing required parameters!"
             }
         }
         //todo: get shopId from dynamo
-        const shopId = "86fdd760-b203-4706-a0f6-931dab09fdf4";
+        const shopId = "edf99677-c7e2-4083-81cf-9f0311ef034a";
         const servicePerShop = await this.primoServices.getServiceForShop(shopId, serviceId);
         const duration: number = servicePerShop.durationInMinutes!;
 
@@ -158,7 +159,8 @@ class AppointmentService {
             throw {
                 code: "ClientError",
                 message: "Missing required parameters!"
-            }        }
+            }
+        }
         let equalsExpressionPredicate;
         if (upcoming) {
             equalsExpressionPredicate = greaterThanOrEqualTo(date);
@@ -176,6 +178,70 @@ class AppointmentService {
             scanIndexForward: false
         }
         return await gen2array(this.mapper.query(Appointment, { userId }, options));
+    }
+
+    async cancelAppointment(employeeId: string, appointmentStartTime: string, initiator: string): Promise<CancelledAppointment> {
+        if (!employeeId || !appointmentStartTime || !initiator) {
+            throw {
+                code: "ClientError",
+                message: "Missing required parameters!"
+            }
+        }
+
+        const appointmentToCancel = await this.getOneAppointment(employeeId, appointmentStartTime);
+        const cancelledAppointment = CancelledAppointment.create(appointmentToCancel, initiator, 'mocked shop id');
+        await this.mapper.delete(appointmentToCancel);
+        return await this.mapper.put(cancelledAppointment);
+    }
+
+    private async getOneAppointment(employeeId: string, startTime: string): Promise<Appointment> {
+        try {
+            const appointmentToGet = new Appointment();
+            appointmentToGet.employeeId = employeeId;
+            appointmentToGet.appointmentStartTime = startTime;
+            return await this.mapper.get(appointmentToGet);
+        } catch (error: any) {
+            if (error.name === 'ItemNotFoundException') {
+                throw {
+                    code: "ClientError",
+                    message: "Unknown appointment!"
+                };
+            } else {
+                throw error;
+            }
+        }
+    }
+
+    async getCancelledAppointmentForUser(userId: string, toDate: string, limit: number): Promise<CancelledAppointment[]> {
+        if (!userId) {
+            throw {
+                code: "ClientError",
+                message: "Missing required parameters!"
+            }
+        }
+        let equalsExpressionPredicate = greaterThanOrEqualTo(toDate);
+        const equalsExpression = {
+            ...equalsExpressionPredicate,
+            subject: 'appointmentStartTime'
+        };
+        let userIdExpressionPredicate = equals(userId);
+        const userIdExpression: ConditionExpression = {
+            ...userIdExpressionPredicate,
+            subject: 'userId'
+        };
+        const andExpression: ConditionExpression = {
+            type: 'And',
+            conditions: [
+                equalsExpression,
+                userIdExpression
+            ]
+        };
+        const options: QueryOptions = {
+            indexName: "userId-index",
+            limit: limit,
+            scanIndexForward: false
+        }
+        return await gen2array(this.mapper.query(CancelledAppointment, andExpression, options));
     }
 
 }

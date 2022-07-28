@@ -30,7 +30,7 @@ class PrimoServices {
     }
 
     async addServicesToShop(shopId: string, services: ServicePerShop[]): Promise<ServicePerShop[]> {
-        if(!shopId || !services || !Array.isArray(services) || services.length === 0) {
+        if (!shopId || !services || services.length === 0) {
             throw {
                 code: "ClientError",
                 message: "Missing required parameters!"
@@ -65,7 +65,7 @@ class PrimoServices {
         const servicePerShop = new ServicePerShop();
         servicePerShop.serviceId = serviceId;
         servicePerShop.shopId = shopId;
-        return await this.mapper.get(servicePerShop); 
+        return await this.mapper.get(servicePerShop);
     }
 
 }

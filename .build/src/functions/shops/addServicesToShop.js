@@ -6,7 +6,7 @@ const services_1 = require("../../services");
 const handler = async (event) => {
     var _a;
     const shopId = (_a = event.pathParameters) === null || _a === void 0 ? void 0 : _a.shopId;
-    const services = event.body;
+    const services = JSON.parse(event.body);
     try {
         const shop = await services_1.primoServices.addServicesToShop(shopId, services);
         return (0, api_gateway_1.formatJSONResponse)(200, shop);

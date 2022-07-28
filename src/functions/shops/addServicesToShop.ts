@@ -4,7 +4,7 @@ import { primoServices } from '../../services';
 
 export const handler = async (event: APIGatewayEvent): Promise<APIGatewayProxyResult> => {
     const shopId = event.pathParameters?.shopId;
-    const services: any = event.body;
+    const services = JSON.parse(event.body!);
     try {
         const shop = await primoServices.addServicesToShop(shopId!, services!);
         return formatJSONResponse(200, shop);

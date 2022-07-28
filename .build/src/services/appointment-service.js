@@ -7,6 +7,7 @@ const array_helper_1 = __importDefault(require("../libs/array-helper"));
 const appointment_1 = require("../models/appointment");
 const dynamodb_expressions_1 = require("@aws/dynamodb-expressions");
 const config_json_1 = __importDefault(require("../../config.json"));
+const cancelledAppointment_1 = require("../models/cancelledAppointment");
 const appointmentTableName = config_json_1.default.PRIMO_APPOINTMENT_TABLE;
 class AppointmentService {
     constructor(mapper, primoServices, employeeWorkHoursService, client) {
@@ -29,7 +30,7 @@ class AppointmentService {
             };
         }
         //todo: get shopId from dynamo
-        const shopId = "86fdd760-b203-4706-a0f6-931dab09fdf4";
+        const shopId = "edf99677-c7e2-4083-81cf-9f0311ef034a";
         const servicePerShop = await this.primoServices.getServiceForShop(shopId, serviceId);
         const duration = servicePerShop.durationInMinutes;
         const appointmentEndTime = addMinutes(new Date(appointmentStartTime), duration).toISOString();
@@ -136,6 +137,84 @@ class AppointmentService {
             scanIndexForward: false
         };
         return await (0, array_helper_1.default)(this.mapper.query(appointment_1.Appointment, { userId }, options));
+    }
+    async cancelAppointment(employeeId, appointmentStartTime, initiator) {
+        if (!employeeId || !appointmentStartTime || !initiator) {
+            throw {
+                code: "ClientError",
+                message: "Missing required parameters!"
+            };
+        }
+        const appointmentToCancel = await this.getOneAppointment(employeeId, appointmentStartTime);
+        const cancelledAppointment = cancelledAppointment_1.CancelledAppointment.create(appointmentToCancel, initiator, 'mocked shop id');
+        await this.mapper.delete(appointmentToCancel);
+        return await this.mapper.put(cancelledAppointment);
+    }
+    async getOneAppointment(employeeId, startTime) {
+        try {
+            const appointmentToGet = new appointment_1.Appointment();
+            appointmentToGet.employeeId = employeeId;
+            appointmentToGet.appointmentStartTime = startTime;
+            return await this.mapper.get(appointmentToGet);
+        }
+        catch (error) {
+            if (error.name === 'ItemNotFoundException') {
+                throw {
+                    code: "ClientError",
+                    message: "Unknown appointment!"
+                };
+            }
+            else {
+                throw error;
+            }
+        }
+    }
+    async getCancelledAppointmentForUser(userId, toDate, limit) {
+        if (!userId) {
+            throw {
+                code: "ClientError",
+                message: "Missing required parameters!"
+            };
+        }
+        let equalsExpressionPredicate = (0, dynamodb_expressions_1.greaterThanOrEqualTo)(toDate);
+        const equalsExpression = Object.assign(Object.assign({}, equalsExpressionPredicate), { subject: 'appointmentStartTime' });
+        let userIdExpressionPredicate = (0, dynamodb_expressions_1.equals)(userId);
+        const userIdExpression = Object.assign(Object.assign({}, userIdExpressionPredicate), { subject: 'userId' });
+        const andExpression = {
+            type: 'And',
+            conditions: [
+                equalsExpression,
+                userIdExpression
+            ]
+        };
+        const options = {
+            indexName: "userId-index",
+            limit: limit,
+            scanIndexForward: false
+        };
+        return await (0, array_helper_1.default)(this.mapper.query(cancelledAppointment_1.CancelledAppointment, andExpression, options));
+        // var params: DynamoDB.Types.QueryInput = {
+        //     TableName: "lemilica-cancelled-appointments",
+        //     IndexName: "userId-index",
+        //     KeyConditionExpression: 'userId = :userId',
+        //     FilterExpression: 'appointmentStartTime >= :appointmentStartTime',
+        //     Limit: limit,
+        //     ScanIndexForward: true,    // true = ascending, false = descending
+        //     ExpressionAttributeValues: {
+        //         ':userId': {S: userId},
+        //         ":appointmentStartTime": {S: toDate}
+        //     }
+        // };
+        // const cancelledAppointments: any = await this.client.query(params).promise();
+        // const Items = cancelledAppointments.Items;
+        // const items = await gen2array(this.mapper.query(CancelledAppointment, { userId }, options));
+        // for (const iterator of items) {
+        //     const todelete = new CancelledAppointment();
+        //     todelete.id = iterator.id;
+        //     await this.mapper.delete(todelete);
+        // }
+        // return items;
+        // return Items;
     }
 }
 function addMinutes(date, minutes) {

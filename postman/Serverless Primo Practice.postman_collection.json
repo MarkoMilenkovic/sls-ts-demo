@@ -103,6 +103,65 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "cancelAppointment",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"employeeId\": \"1\",\n    \"appointmentStartTime\": \"2022-07-25T17:15:00.000Z\",\n    \"initiator\": \"1\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{protocol}}://{{apiUrl}}/{{stage}}/appointment/cancel",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"{{stage}}",
+								"appointment",
+								"cancel"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getCancelledAppointmentsForUser",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{protocol}}://{{apiUrl}}/{{stage}}/appointment/cancel?userId=1&limit=1",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"{{stage}}",
+								"appointment",
+								"cancel"
+							],
+							"query": [
+								{
+									"key": "userId",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -375,7 +434,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "[\n    {\n        \"name\": \"Cars\",\n        \"description\": \"Description about cars category\"\n    }\n]",
+							"raw": "[\n    {\n        \"name\": \"lemilica\",\n        \"description\": \"Description about cars category\"\n    },\n        {\n        \"name\": \"Barber\",\n        \"description\": \"Description about nails category\"\n    }\n]",
 							"options": {
 								"raw": {
 									"language": "json"

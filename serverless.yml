@@ -65,6 +65,18 @@ functions:
       - http:
           path: appointment/previous
           method: get
+  cancelAppointment:
+    handler: src/functions/appointments/cancelAppointment.handler
+    events:
+      - http:
+          path: appointment/cancel
+          method: put
+  getCancelledAppointments:
+    handler: src/functions/appointments/getCancelledAppointmentsForUser.handler
+    events:
+      - http:
+          path: appointment/cancel
+          method: get
   queryShopsByRadius:
     handler: src/functions/shops/queryShopsByRadius.handler
     events:
@@ -287,3 +299,32 @@ resources:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
         TableName: ${file(config.json):PRIMO_CATEGORIES_TABLE}
+    CancelledAppointmentsTable:
+      Type: "AWS::DynamoDB::Table"
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: "id"
+            AttributeType: "S"
+          - AttributeName: "userId"
+            AttributeType: "S"
+          - AttributeName: "appointmentStartTime"
+            AttributeType: "S" 
+        KeySchema:
+          - AttributeName: "id"
+            KeyType: "HASH"
+        GlobalSecondaryIndexes:
+          - IndexName: "userId-index"
+            KeySchema:
+              - AttributeName: "userId"
+                KeyType: "HASH"
+              - AttributeName: "appointmentStartTime"
+                KeyType: "RANGE"
+            Projection:
+              ProjectionType: "ALL"
+            ProvisionedThroughput:
+              ReadCapacityUnits: 1
+              WriteCapacityUnits: 1
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: ${file(config.json):PRIMO_CANCELLED_APPOINTMENT_TABLE}
